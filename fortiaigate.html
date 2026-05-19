@@ -33,7 +33,11 @@ body{
 
 /* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:100}
-.topbar-title{font-size:14px;font-weight:600;color:var(--text-secondary);letter-spacing:.5px;white-space:nowrap}
+.topbar-title{font-size:11px;font-weight:600;color:var(--text-secondary);letter-spacing:1.8px;text-transform:uppercase;white-space:nowrap}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.brand-logo{height:18px;width:auto;color:var(--text-primary);flex-shrink:0}
+.brand-sep{width:1px;height:18px;background:rgba(255,255,255,0.15);flex-shrink:0}
+.light-mode .brand-sep{background:rgba(0,0,0,0.12)}
 .timeline{display:flex;align-items:center}
 .timeline-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;border:2px solid var(--ft-grey);color:var(--ft-grey);background:transparent;transition:all .35s;position:relative;z-index:2}
 .timeline-dot.active{border-color:var(--accent);color:#fff;background:var(--accent);box-shadow:0 0 12px var(--accent)}
@@ -147,12 +151,14 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .intro-overlay.hidden{opacity:0;pointer-events:none}
 .intro-card{max-width:520px;text-align:center;animation:fadeUp .8s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.intro-icon{font-size:48px;margin-bottom:12px}
-.intro-eyebrow{font-size:13px;font-weight:600;letter-spacing:2px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase}
-.intro-title{font-size:44px;font-weight:800;color:var(--text-primary);margin-bottom:16px;letter-spacing:-0.03em;line-height:1.1}
-.intro-desc{font-size:16px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px}
-.intro-cta{display:inline-block;padding:14px 36px;border-radius:24px;background:linear-gradient(135deg,var(--ft-red),var(--ft-blue));color:#fff;font-size:16px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;box-shadow:0 4px 24px rgba(218,41,28,0.2)}
-.intro-cta:hover{transform:translateY(-1px);box-shadow:0 6px 32px rgba(218,41,28,0.3)}
+.intro-icon{display:block;height:64px;width:auto;margin:0 auto 18px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.intro-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.8px;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase}
+.intro-title{font-size:clamp(28px,4.5vw,42px);font-weight:800;color:var(--text-primary);margin-bottom:16px;letter-spacing:-0.02em;line-height:1.1}
+.intro-title .gr{color:var(--ft-red)}
+.intro-desc{font-size:15px;color:var(--text-secondary);line-height:1.6;margin-bottom:26px}
+.intro-cta{display:inline-block;padding:15px 42px;border-radius:28px;background:var(--ft-red);color:#fff;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;box-shadow:0 4px 24px rgba(218,41,28,0.35)}
+.intro-cta:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(218,41,28,0.5);filter:brightness(1.08)}
 .intro-hints{display:flex;align-items:center;justify-content:center;gap:32px;margin-top:28px}
 .intro-hint-item{display:flex;flex-direction:column;align-items:center;gap:6px}
 .intro-hint-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:16px}
@@ -463,7 +469,9 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 <body>
 
 <div class="topbar">
-  <div style="display:flex;align-items:center;gap:14px">
+  <div class="topbar-left">
+    <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 487.6 55" aria-label="Fortinet"><path fill="currentColor" d="M279.9 11.7V0h13.4v54.8h-13.4V11.7zM220.9 0h51.7v11.8h-24.3v43.1H235V11.8h-14.1V0zm266.7 0v11.8h-24.3v43.1H450V11.8h-14.1V0h51.7zM0 0h58v11.8H13.4v11.7h38v11.8h-38v19.5H0V0zm374.5 0h54v11.8h-40.6v9.8h33.3v11.8h-33.3v9.8h41.3V55h-54.7V0zm-10.3 15.5v39.3h-13.4V15.5c0-2.1-1.6-3.7-3.7-3.7h-30v43.1h-13.4V0h45c8.5 0 15.5 7 15.5 15.5zM200.3 0h-45.7v54.8H168V35.3h30c1.6.1 2.9 1.4 2.9 3v16.6h13.4V38.1c0-2.9-1.6-5.4-4-6.8 2.9-2.7 4.7-6.6 4.7-10.8v-5.8c.1-8.1-6.5-14.7-14.7-14.7zm1.4 20.5c0 1.6-1.3 3-3 3H168V11.8h30.7c1.6 0 3 1.3 3 3v5.7z"/><path fill="#da291c" d="M144.2 20.4v14.2H122V20.4h22.2zM93.9 54.8H116V40.6H93.9v14.2zm50.3-42.9c0-6.6-5.3-11.9-11.9-11.9h-10.2v14.2h22.1v-2.3zM93.9 0v14.2H116V0H93.9zM65.7 20.4v14.2h22.1V20.4H65.7zM122 54.8h10.2c6.6 0 11.9-5.3 11.9-11.9v-2.3H122v14.2zM65.7 42.9c0 6.6 5.3 11.9 11.9 11.9h10.2V40.6H65.7v2.3zm0-31v2.3h22.1V0H77.6C71 0 65.7 5.3 65.7 11.9z"/></svg>
+    <div class="brand-sep"></div>
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</div>
     <div class="topbar-title">SECURING AI AGENTS · FORTIAIGATE</div>
   </div>
@@ -506,8 +514,9 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 <div class="intro-overlay" id="introOverlay">
   <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="position:absolute;top:20px;left:24px;z-index:501">☀️</div>
   <div class="intro-card">
-    <div class="intro-eyebrow">FortiAIGate</div>
-    <div class="intro-title">Securing AI<br>Agents</div>
+    <svg class="intro-icon" xmlns="http://www.w3.org/2000/svg" viewBox="65 0 80 55" aria-label="Fortinet"><path fill="#da291c" d="M144.2 20.4v14.2H122V20.4h22.2zM93.9 54.8H116V40.6H93.9v14.2zm50.3-42.9c0-6.6-5.3-11.9-11.9-11.9h-10.2v14.2h22.1v-2.3zM93.9 0v14.2H116V0H93.9zM65.7 20.4v14.2h22.1V20.4H65.7zM122 54.8h10.2c6.6 0 11.9-5.3 11.9-11.9v-2.3H122v14.2zM65.7 42.9c0 6.6 5.3 11.9 11.9 11.9h10.2V40.6H65.7v2.3zm0-31v2.3h22.1V0H77.6C71 0 65.7 5.3 65.7 11.9z"/></svg>
+    <div class="intro-eyebrow">FortiAIGate · Presenter Walkthrough</div>
+    <div class="intro-title">Securing <span class="gr">AI Agents</span></div>
     <div class="intro-desc">We've spent years — and billions of dollars — securing enterprise data, applications, and infrastructure.<br><br>Now we're exposing that same data to large language models and autonomous agents. The question for today: <em>how do we secure that interaction layer?</em></div>
     <button class="intro-cta" id="introStart">Begin the Talk</button>
     <div class="intro-hints">
