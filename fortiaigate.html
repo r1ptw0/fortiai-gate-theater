@@ -1112,6 +1112,13 @@ const INCIDENT_TEXTS = [
     'WARN: prompt entropy spike on coding session',
     'ANOMALY: SOC copilot calling out-of-policy tool',
     'INFO: HR assistant queried compensation data 12x',
+    'NOTICE: outbound LLM call missing audit context',
+    'ANOMALY: vector store query rate +480% in 1h',
+    'WARN: chat session re-used after timeout reset',
+    'NOTICE: agent acting outside business hours',
+    'ANOMALY: model temperature drift detected',
+    'INFO: 14 net-new MCP endpoints registered today',
+    'WARN: developer IDE plugin posting to non-corp domain',
   ],
   /* tier 1 — detections */ [
     'DETECT: prompt injection signature in document chunk',
@@ -1121,6 +1128,13 @@ const INCIDENT_TEXTS = [
     'ALERT: coding assistant exfiltrated 2.4MB source',
     'WARN: model response contained SQL pattern',
     'DETECT: PII redaction failed on transcript',
+    'ALERT: jailbreak prompt matched in RAG retrieval',
+    'DETECT: unauthorized tool invocation attempt',
+    'WARN: model output references internal hostnames',
+    'ALERT: customer email body matched DLP policy',
+    'DETECT: agent attempted role escalation via tool args',
+    'WARN: redaction filter bypassed via base64 payload',
+    'ALERT: prompt encoded shell command in disguise',
   ],
   /* tier 2 — breaches */ [
     'CRITICAL: agent overrode system prompt via reasoning',
@@ -1130,6 +1144,13 @@ const INCIDENT_TEXTS = [
     'CRITICAL: reverse shell via package install',
     'BREACH: 40,000+ code snippets to external API',
     'EMERGENCY: agent self-modified tool authorization',
+    'CRITICAL: agent leaked OAuth token in chat history',
+    'BREACH: source repository cloned to attacker host',
+    'EMERGENCY: vector DB exfiltrated via embedding API',
+    'CRITICAL: agent disabled rate-limit on its own model',
+    'BREACH: HR assistant disclosed severance policy',
+    'EMERGENCY: agent ignored kill-switch instruction',
+    'CRITICAL: trusted plugin returned attacker payload',
   ],
   /* tier 3 — catastrophic */ [
     'FATAL: compromised SOC agent disabled detections',
@@ -1139,6 +1160,13 @@ const INCIDENT_TEXTS = [
     'FATAL: proprietary code in external training set',
     'INCIDENT: injection chain leaked customer DB',
     'CRITICAL: AI proxy bypassed via direct CSP API',
+    'FATAL: agent reasoning: "the rules dont apply here"',
+    'INCIDENT: production data residency boundary crossed',
+    'CRITICAL: 3 dependent agents pivoted into compromise',
+    'EMERGENCY: agent wrote arbitrary code to CI/CD pipeline',
+    'FATAL: model trained on exfiltrated customer records',
+    'INCIDENT: agent forged tool result to justify action',
+    'CRITICAL: detection engine output overwritten by LLM',
   ],
 ];
 const STREAM_COLORS = ['var(--ft-red)','#ff2d2d','var(--ft-silver)','#ff6b6b','var(--ft-teal)'];
@@ -1151,8 +1179,10 @@ function spawnStream(tier){
   if (!container) return;
   const el = document.createElement('div');
   el.className = 'glitch-stream';
-  const top = 5 + Math.random() * 80;
-  const left = 2 + Math.random() * 55;
+  const top = 5 + Math.random() * 82;
+  // Bias position toward left or right gutter so streams land outside the centered card
+  const onRight = Math.random() < 0.5;
+  const left = onRight ? (62 + Math.random() * 26) : (2 + Math.random() * 18);
   const size = 0.7 + Math.random() * 0.7;
   const color = STREAM_COLORS[Math.floor(Math.random() * STREAM_COLORS.length)];
   el.style.top = top + '%';
@@ -1188,6 +1218,23 @@ function clearGlitchStreams(){
   const c = document.getElementById('glitchStreams');
   if (c) c.innerHTML = '';
 }
+
+/* Continuous ambient stream loop — runs while SOC attack sim is open, tier escalates with breach progress */
+let socStreamLoop = null;
+let socAlertTier = 0;
+function clearSocStreamLoop(){ if (socStreamLoop){ clearTimeout(socStreamLoop); socStreamLoop = null; } }
+function scheduleSocStream(){
+  clearSocStreamLoop();
+  const delay = 2200 + Math.random() * 2400; // 2.2–4.6s between ambient spawns
+  socStreamLoop = setTimeout(() => {
+    if (document.getElementById('socSim').classList.contains('show')){
+      spawnStream(socAlertTier);
+      scheduleSocStream();
+    }
+  }, delay);
+}
+function startSocStreamLoop(){ socAlertTier = 0; scheduleSocStream(); }
+function stopSocStreamLoop(){ clearSocStreamLoop(); socAlertTier = 0; }
 
 /* Escalating ambient pulse — fires while in Act 3 only, intensity ramps as user clicks hotspots */
 let act3Tension = 0;
@@ -1327,8 +1374,8 @@ function revealSeq(rootEl, idx, doneFn){
     const s = steps[idx];
     s.classList.add('show');
     s.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    if (s.classList.contains('bad')){ triggerGlitch('hard'); for (let k = 0; k < 3; k++) aT(() => spawnStream(3), k * 220); }
-    else if (s.classList.contains('warn')){ triggerGlitch('soft'); aT(() => spawnStream(2), 120); }
+    if (s.classList.contains('bad')){ triggerGlitch('hard'); socAlertTier = 3; for (let k = 0; k < 3; k++) aT(() => spawnStream(3), k * 220); }
+    else if (s.classList.contains('warn')){ triggerGlitch('soft'); socAlertTier = Math.max(socAlertTier, 2); aT(() => spawnStream(2), 120); }
     aT(() => revealSeq(rootEl, idx + 1, doneFn), STEP_MS);
   } else {
     aT(doneFn, 300);
@@ -1443,6 +1490,7 @@ const SOC_SIMS = {
 
 function closeSocSim(){
   clearAgencyTimers();
+  stopSocStreamLoop();
   clearGlitchStreams();
   const ov = document.getElementById('socSim');
   ov.classList.remove('show');
@@ -1453,6 +1501,8 @@ function socFinishNow(){
   clearAgencyTimers();
   const root = document.getElementById('socInner');
   root.querySelectorAll('.astep').forEach(e => e.classList.add('show'));
+  if (root.querySelector('.astep.bad')) socAlertTier = 3;
+  else if (root.querySelector('.astep.warn')) socAlertTier = Math.max(socAlertTier, 2);
   const a = root.querySelector('#socA'); if (a) a.classList.add('show');
   const sc = root.querySelector('#socScale'); if (sc) sc.classList.add('show');
   const sk = root.querySelector('#socSkip'); if (sk) sk.style.display = 'none';
@@ -1479,6 +1529,7 @@ function runSocSim(kind){
       </div>
     </div>`;
   ov.classList.add('show');
+  if (kind === 'attack') startSocStreamLoop();
   aT(() => revealSeq(root, 0, () => {
     const a = root.querySelector('#socA'); if (a){ a.classList.add('show'); a.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
     aT(() => { const sc = root.querySelector('#socScale'); if (sc) sc.classList.add('show'); const sk = root.querySelector('#socSkip'); if (sk) sk.style.display = 'none'; }, 650);
