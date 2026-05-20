@@ -455,6 +455,44 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .payload .pl-h{font-family:'Inter',sans-serif;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--ft-red);margin-bottom:8px}
 .payload code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#d6dcea;display:block;white-space:pre-wrap;background:rgba(0,0,0,0.3);border-radius:6px;padding:9px 11px;margin-top:6px}
 .payload .pl-secret{color:#ff8a80;background:rgba(218,41,28,0.22);padding:1px 4px;border-radius:3px}
+/* ── BREACH GLITCH (inspired by gaslight.html) ── */
+.glitch-overlay{position:fixed;inset:0;display:none;pointer-events:none;z-index:700;mix-blend-mode:screen}
+.glitch-overlay.active{display:block;animation:glitch-flash 0.6s ease-out forwards}
+.glitch-overlay.active.hard{animation:glitch-flash 0.95s ease-out forwards}
+@keyframes glitch-flash{
+  0%{background:transparent;transform:none;clip-path:inset(0)}
+  3%{background:rgba(255,0,0,0.32);transform:translateX(-10px) skewX(-4deg);clip-path:inset(10% 0 30% 0)}
+  6%{background:rgba(0,255,255,0.28);transform:translateX(12px) skewX(5deg);clip-path:inset(40% 0 10% 0)}
+  9%{background:transparent;transform:translateX(-8px) scaleY(1.02);clip-path:inset(0)}
+  12%{background:rgba(255,71,87,0.38);transform:translateX(6px) skewX(-3deg);clip-path:inset(60% 0 5% 0)}
+  15%{background:rgba(0,255,0,0.14);transform:translateX(-14px) skewX(2deg);clip-path:inset(20% 0 50% 0)}
+  18%{background:transparent;transform:translateX(4px);clip-path:inset(0)}
+  22%{background:rgba(218,41,28,0.32);transform:translateX(-6px) skewX(-5deg) scaleX(1.01);clip-path:inset(5% 0 60% 0)}
+  26%{background:rgba(0,255,255,0.22);transform:translateX(10px) skewX(3deg);clip-path:inset(70% 0 0 0)}
+  30%{background:transparent;transform:translateX(-3px);clip-path:inset(0)}
+  35%{background:rgba(255,71,87,0.18);transform:translateX(5px) skewX(-1deg)}
+  40%{background:transparent;transform:translateX(-2px)}
+  55%{background:rgba(218,41,28,0.06);transform:translateX(1px)}
+  100%{background:transparent;transform:none;clip-path:inset(0)}
+}
+.glitch-overlay .scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,0.34) 1px,rgba(0,0,0,0.34) 2px);animation:scanline-scroll 0.6s linear}
+.glitch-overlay.active.hard .scanlines{animation-duration:0.95s}
+@keyframes scanline-scroll{
+  0%{transform:translateY(-30%);opacity:1}
+  60%{opacity:0.6}
+  100%{transform:translateY(0);opacity:0}
+}
+.glitch-overlay .rgb-split{position:absolute;inset:0;animation:rgb-split 0.6s ease-out}
+.glitch-overlay.active.hard .rgb-split{animation-duration:0.95s}
+@keyframes rgb-split{
+  0%,25%{box-shadow:inset clamp(6px,0.5vw,14px) 0 rgba(255,0,0,0.45),inset clamp(-6px,-0.5vw,-14px) 0 rgba(0,255,255,0.45)}
+  50%{box-shadow:inset clamp(-3px,-0.3vw,-8px) 0 rgba(255,0,0,0.2),inset clamp(3px,0.3vw,8px) 0 rgba(0,255,255,0.2)}
+  100%{box-shadow:none}
+}
+/* Ambient scanlines during Act 3 only — subtle "compromised CRT" backdrop */
+.scanline-ambient{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;pointer-events:none;z-index:80;display:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(218,41,28,0.05) 2px,rgba(218,41,28,0.05) 3px);animation:scanline-amb 7s linear infinite;opacity:.55}
+.scanline-ambient.on{display:block}
+@keyframes scanline-amb{from{background-position:0 0}to{background-position:0 200%}}
 /* ── SPEAKER NOTES ── */
 .speaker-notes{position:fixed;left:0;right:0;bottom:0;max-height:44vh;overflow-y:auto;background:rgba(8,10,18,0.97);backdrop-filter:blur(16px);border-top:2px solid var(--ft-purple);padding:15px 30px 20px;transform:translateY(101%);transition:transform .3s ease;z-index:95;font-size:14px;line-height:1.75;color:#ded7ee}
 .speaker-notes.show{transform:translateY(0)}
@@ -506,6 +544,12 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 <div class="sim-overlay" id="socSim">
   <button class="sim-close" id="socClose" onclick="closeSocSim()">&times;</button>
   <div class="sim-inner" id="socInner"></div>
+</div>
+
+<div class="scanline-ambient" id="scanlineAmb"></div>
+<div class="glitch-overlay" id="glitchOverlay">
+  <div class="scanlines"></div>
+  <div class="rgb-split"></div>
 </div>
 
 <div id="floatTip"></div>
@@ -1015,7 +1059,21 @@ function goFlow(i){
     renderTimeline();
     slide.scrollTop = 0;
   }
+  document.getElementById('scanlineAmb').classList.toggle('on', s.type === 'act' && s.n === 3);
+  if (s.type === 'act' && s.n === 3) aT(() => triggerGlitch('soft'), 260);
   renderNotes();
+}
+
+/* ═══ BREACH GLITCH FX (gaslight-inspired) ═══ */
+function triggerGlitch(intensity){
+  const ov = document.getElementById('glitchOverlay');
+  if (!ov) return;
+  ov.classList.remove('active','hard');
+  void ov.offsetWidth; // force reflow to restart animation
+  ov.classList.add('active');
+  if (intensity === 'hard') ov.classList.add('hard');
+  const dur = intensity === 'hard' ? 1000 : 700;
+  setTimeout(() => ov.classList.remove('active','hard'), dur);
 }
 
 /* ═══ RENDER ═══ */
@@ -1127,8 +1185,11 @@ const STEP_MS = 780;
 function revealSeq(rootEl, idx, doneFn){
   const steps = rootEl.querySelectorAll('.astep');
   if (idx < steps.length){
-    steps[idx].classList.add('show');
-    steps[idx].scrollIntoView({ behavior:'smooth', block:'nearest' });
+    const s = steps[idx];
+    s.classList.add('show');
+    s.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    if (s.classList.contains('bad')) triggerGlitch('hard');
+    else if (s.classList.contains('warn')) triggerGlitch('soft');
     aT(() => revealSeq(rootEl, idx + 1, doneFn), STEP_MS);
   } else {
     aT(doneFn, 300);
