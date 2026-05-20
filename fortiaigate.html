@@ -399,7 +399,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .slide-takeaway strong{color:var(--text-primary)}
 .owasp-why{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:22px}
 .owasp-why-card{border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:15px 15px;background:rgba(255,255,255,0.02)}
-.owasp-why-card h4{font-size:11.5px;font-weight:700;letter-spacing:.5px;color:var(--ft-red);margin-bottom:6px;text-transform:uppercase}
+.owasp-why-card h4{font-size:11.5px;font-weight:700;letter-spacing:.5px;color:var(--text-primary);margin-bottom:6px;text-transform:uppercase}
 .owasp-why-card p{font-size:12px;color:var(--text-secondary);line-height:1.55}
 .owasp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
 .owasp-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02)}
@@ -633,12 +633,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
     <div class="intro-title">Securing <span class="gr">AI Agents</span></div>
     <div class="intro-desc">We've spent years — and billions of dollars — securing enterprise data, applications, and infrastructure.<br><br>Now we're exposing that same data to large language models and autonomous agents. The question for today: <em>how do we secure that interaction layer?</em></div>
     <button class="intro-cta" id="introStart">Begin the Talk</button>
-    <div class="intro-hints">
-      <div class="intro-hint-item"><div class="intro-hint-icon">→</div><span class="intro-hint-label">Arrow keys advance</span></div>
-      <div class="intro-hint-item"><div class="intro-hint-icon">🎤</div><span class="intro-hint-label">Press N for notes</span></div>
-      <div class="intro-hint-item"><div class="intro-hint-icon">👆</div><span class="intro-hint-label">Hotspots = optional depth</span></div>
-    </div>
-    <div class="intro-meta">Presenter mode · 2 concepts + 4 acts · Speaker notes built in</div>
   </div>
 </div>
 
@@ -1093,11 +1087,11 @@ const NODES = [
 
 /* ═══ CONNECTORS ═══ */
 const CONNS = [
-  ['n1','n2',1,C.blue], ['n2','n2b',1,C.blue], ['n2b','n3',1,C.blue], ['n4','n3',1,C.blue], ['n4c','n3',1,C.blue],
+  ['n1','n2',1,C.blue], ['n2','n2b',1,C.blue], ['n2b','n3',1,C.blue], ['n4','n3',1,C.blue], ['n4b','n3',1,C.blue], ['n4c','n3',1,C.blue],
   ['n3','n5',2,C.yellow], ['n3','n6',2,C.yellow],
   ['n3','n7',3,C.red], ['n3','n8',3,C.red],
   // Act 4: governed flow — org → proxy left edge, proxy right edge → LLM
-  ['n2','n9L',4,C.green], ['n4','n9L',4,C.green], ['n4c','n9L',4,C.green],
+  ['n2','n9L',4,C.green], ['n4','n9L',4,C.green], ['n4b','n9L',4,C.green], ['n4c','n9L',4,C.green],
   ['n9R','n3',4,C.green],
 ];
 
