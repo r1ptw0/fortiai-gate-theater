@@ -90,8 +90,9 @@ body{
 .seller-tip::before{content:'KEY INSIGHT';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:4px}
 
 /* ── DIAGRAM ── */
-.diagram-wrap{position:relative;max-width:960px;margin:20px auto 0;padding:0 16px}
-.diagram{position:relative;width:100%;height:540px;min-height:400px}
+.diagram-wrap{position:relative;width:100%;margin:20px 0 0;padding:0 16px;display:flex;justify-content:center;align-items:flex-start;overflow:hidden}
+.diagram-stage{position:relative;width:960px;height:540px;flex-shrink:0;transform-origin:top center;transform:scale(var(--diagram-scale,1));transition:transform .25s var(--ease-out-soft)}
+.diagram{position:relative;width:100%;height:100%;min-height:0}
 svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 
 /* ── ZONES ── */
@@ -178,7 +179,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 /* ── CONNECTORS ── */
 @keyframes dash-flow{to{stroke-dashoffset:-20}}
-.connector{fill:none;stroke-width:2;stroke-dasharray:8 6;animation:dash-flow 1s linear infinite}
+.connector{fill:none;stroke-width:2;stroke-dasharray:8 6;animation:dash-flow 1s linear infinite;vector-effect:non-scaling-stroke}
 
 /* ── INTRO OVERLAY ── */
 .intro-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s}
@@ -581,9 +582,11 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 <div class="main" id="main">
   <div class="act-header" id="actHeader"></div>
-  <div class="diagram-wrap">
-    <div class="diagram" id="diagram">
-      <svg class="connectors" id="svgConnectors"></svg>
+  <div class="diagram-wrap" id="diagramWrap">
+    <div class="diagram-stage" id="diagramStage">
+      <div class="diagram" id="diagram">
+        <svg class="connectors" id="svgConnectors" viewBox="0 0 960 540" preserveAspectRatio="none"></svg>
+      </div>
     </div>
   </div>
   <div class="bottom-area" id="bottomArea"></div>
@@ -1113,10 +1116,10 @@ const BADGES = [
 /* ═══ STATE ═══ */
 let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, notesOpen = false, sprawlActive = false;
 const SPRAWL_MODELS = [
-  { x:540, y:130, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
-  { x:625, y:130, icon:ICONS.cpu, label:'Anthropic Claude' },
-  { x:540, y:330, icon:ICONS.cpu, label:'Google Gemini' },
-  { x:625, y:330, icon:ICONS.cpu, label:'Self-hosted Llama' },
+  { x:510, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
+  { x:650, y:100, icon:ICONS.cpu, label:'Anthropic Claude' },
+  { x:510, y:360, icon:ICONS.cpu, label:'Google Gemini' },
+  { x:650, y:360, icon:ICONS.cpu, label:'Self-hosted Llama' },
 ];
 const visited = new Set();
 
@@ -1389,6 +1392,7 @@ function bumpAct3Tension(){
 /* ═══ RENDER ═══ */
 function render() {
   renderTimeline(); renderHeader(); renderDiagram(); renderBottom();
+  fitStage();
   setTimeout(updateConns, 60);
 }
 
@@ -1964,7 +1968,10 @@ function renderBottom() {
 function updateConns() {
   const svg = document.getElementById('svgConnectors');
   svg.innerHTML = '';
-  const dR = document.getElementById('diagram').getBoundingClientRect();
+  const sR = document.getElementById('diagramStage').getBoundingClientRect();
+  // Stage is logically 960×540; current rendered scale = sR.width / 960. Connector
+  // coords are written in logical units (SVG has viewBox "0 0 960 540").
+  const scale = sR.width / 960 || 1;
 
   CONNS.forEach(([fId, tId, aI, col]) => {
     if (aI > curAct) return;
@@ -1977,8 +1984,10 @@ function updateConns() {
     const ti = tEl.querySelector('.node-icon');
     if (!fi || !ti) return;
     const fR = fi.getBoundingClientRect(), tR = ti.getBoundingClientRect();
-    const x1 = fR.left + fR.width / 2 - dR.left, y1 = fR.top + fR.height / 2 - dR.top;
-    const x2 = tR.left + tR.width / 2 - dR.left, y2 = tR.top + tR.height / 2 - dR.top;
+    const x1 = (fR.left + fR.width / 2 - sR.left) / scale;
+    const y1 = (fR.top + fR.height / 2 - sR.top) / scale;
+    const x2 = (tR.left + tR.width / 2 - sR.left) / scale;
+    const y2 = (tR.top + tR.height / 2 - sR.top) / scale;
     const op = aI === curAct ? 0.7 : 0.3;
     const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     ln.setAttribute('x1', x1); ln.setAttribute('y1', y1);
@@ -2105,7 +2114,16 @@ document.addEventListener('keydown', e => {
 });
 document.getElementById('snToggle').onclick = () => toggleNotes();
 
-window.addEventListener('resize', () => updateConns());
+function fitStage(){
+  const wrap = document.getElementById('diagramWrap');
+  if (!wrap) return;
+  // Available width inside the wrap (accounting for the 16px horizontal padding × 2)
+  const availW = wrap.clientWidth - 32;
+  const scale = Math.min(1, Math.max(0.45, availW / 960));
+  document.documentElement.style.setProperty('--diagram-scale', scale.toFixed(4));
+  wrap.style.height = Math.round(540 * scale + 8) + 'px';
+}
+window.addEventListener('resize', () => { fitStage(); updateConns(); });
 
 /* ── FLOATING TOOLTIP (avoids overflow clipping) ── */
 (function() {
@@ -2163,6 +2181,7 @@ window.addEventListener('resize', () => updateConns());
 
 renderTimeline();
 renderNotes();
+fitStage();
 </script>
 </body>
 </html>
