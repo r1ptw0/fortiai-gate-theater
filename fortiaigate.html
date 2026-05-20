@@ -459,6 +459,15 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .glitch-overlay{position:fixed;inset:0;display:none;pointer-events:none;z-index:700;mix-blend-mode:screen}
 .glitch-overlay.active{display:block;animation:glitch-flash 0.6s ease-out forwards}
 .glitch-overlay.active.hard{animation:glitch-flash 0.95s ease-out forwards}
+.glitch-overlay.active.whisper{animation:glitch-whisper 0.42s ease-out forwards}
+.glitch-overlay.whisper > *{display:none}
+@keyframes glitch-whisper{
+  0%{background:transparent}
+  18%{background:rgba(218,41,28,0.09);transform:translateX(-2px)}
+  40%{background:transparent;transform:translateX(1px)}
+  62%{background:rgba(0,255,255,0.06);transform:translateX(-1px)}
+  100%{background:transparent;transform:none}
+}
 @keyframes glitch-flash{
   0%{background:transparent;transform:none;clip-path:inset(0)}
   3%{background:rgba(255,0,0,0.32);transform:translateX(-10px) skewX(-4deg);clip-path:inset(10% 0 30% 0)}
@@ -1059,8 +1068,14 @@ function goFlow(i){
     renderTimeline();
     slide.scrollTop = 0;
   }
-  document.getElementById('scanlineAmb').classList.toggle('on', s.type === 'act' && s.n === 3);
-  if (s.type === 'act' && s.n === 3) aT(() => triggerGlitch('soft'), 260);
+  const onAct3 = (s.type === 'act' && s.n === 3);
+  document.getElementById('scanlineAmb').classList.toggle('on', onAct3);
+  if (onAct3){
+    aT(() => triggerGlitch('soft'), 260);
+    startAct3Pulse();
+  } else {
+    stopAct3Pulse();
+  }
   renderNotes();
 }
 
@@ -1068,12 +1083,39 @@ function goFlow(i){
 function triggerGlitch(intensity){
   const ov = document.getElementById('glitchOverlay');
   if (!ov) return;
-  ov.classList.remove('active','hard');
+  ov.classList.remove('active','hard','whisper');
   void ov.offsetWidth; // force reflow to restart animation
   ov.classList.add('active');
   if (intensity === 'hard') ov.classList.add('hard');
-  const dur = intensity === 'hard' ? 1000 : 700;
-  setTimeout(() => ov.classList.remove('active','hard'), dur);
+  else if (intensity === 'whisper') ov.classList.add('whisper');
+  const dur = intensity === 'hard' ? 1000 : intensity === 'whisper' ? 480 : 700;
+  setTimeout(() => ov.classList.remove('active','hard','whisper'), dur);
+}
+
+/* Escalating ambient pulse — fires while in Act 3 only, intensity ramps as user clicks hotspots */
+let act3Tension = 0;
+let act3PulseTimer = null;
+function clearAct3Pulse(){ if (act3PulseTimer){ clearTimeout(act3PulseTimer); act3PulseTimer = null; } }
+function scheduleAct3Pulse(){
+  clearAct3Pulse();
+  let intensity, minMs, maxMs;
+  if (act3Tension < 2)      { intensity = 'whisper'; minMs = 9000;  maxMs = 11000; }
+  else if (act3Tension < 5) { intensity = 'soft';    minMs = 7000;  maxMs = 9000;  }
+  else                       { intensity = 'hard';    minMs = 5500;  maxMs = 7500;  }
+  const delay = minMs + Math.random() * (maxMs - minMs);
+  act3PulseTimer = setTimeout(() => {
+    if (curAct === 3 && FLOW[flowIdx] && FLOW[flowIdx].type === 'act'){
+      triggerGlitch(intensity);
+      scheduleAct3Pulse();
+    }
+  }, delay);
+}
+function startAct3Pulse(){ act3Tension = 0; scheduleAct3Pulse(); }
+function stopAct3Pulse(){ clearAct3Pulse(); act3Tension = 0; }
+function bumpAct3Tension(){
+  if (curAct !== 3 || !FLOW[flowIdx] || FLOW[flowIdx].type !== 'act') return;
+  act3Tension = Math.min(act3Tension + 1, 8);
+  scheduleAct3Pulse();
 }
 
 /* ═══ RENDER ═══ */
@@ -1690,6 +1732,7 @@ function openPanel(n) {
   panelOpen = true;
   renderDiagram();
   setTimeout(updateConns, 60);
+  bumpAct3Tension();
 }
 
 function closePanel() {
