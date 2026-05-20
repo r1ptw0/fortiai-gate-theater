@@ -223,65 +223,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .summary-cta.secondary:hover{background:rgba(255,255,255,0.1)}
 
 /* ── THE ARMORY ── */
-.armory-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.94);backdrop-filter:blur(20px);display:flex;align-items:flex-start;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;overflow-y:auto;padding:40px 20px}
-.armory-overlay.visible{opacity:1;pointer-events:auto}
-.armory-container{max-width:680px;width:100%;padding-bottom:60px;animation:fadeUp .5s ease both}
-.armory-header{text-align:center;margin-bottom:32px}
-.armory-eyebrow{font-size:28px;font-weight:800;letter-spacing:3px;background:linear-gradient(90deg,var(--ft-red),var(--ft-blue),var(--ft-teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:12px}
-.armory-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:8px}
-.armory-subtitle{font-size:13px;color:var(--text-secondary);line-height:1.6}
-.armory-close{position:fixed;top:20px;right:24px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-secondary);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:601}
-.armory-close:hover{background:rgba(255,255,255,0.12)}
-.armory-stats-hero{background:linear-gradient(165deg,rgba(218,41,28,0.06) 0%,rgba(255,255,255,0.03) 50%,rgba(48,127,226,0.05) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px 28px;margin-bottom:28px;position:relative;overflow:hidden}
-.armory-stats-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ft-red),var(--ft-blue),var(--ft-teal),var(--ft-green))}
-.armory-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;transition:grid-template-columns .35s ease}
-.armory-cards.has-open{grid-template-columns:auto}
-.armory-card{background:linear-gradient(165deg,rgba(218,41,28,0.04) 0%,rgba(255,255,255,0.03) 50%,rgba(48,127,226,0.04) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;position:relative;transition:all .35s ease}
-.armory-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ft-red),var(--ft-blue),var(--ft-teal),var(--ft-green));opacity:.4}
-.armory-card-header{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 16px;cursor:pointer;user-select:none;transition:background .2s;text-align:center}
-.armory-card-header:hover{background:rgba(255,255,255,0.03)}
-.armory-card-icon{font-size:24px;transition:font-size .3s}
-.armory-card-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px;transition:font-size .3s}
-.armory-card-subtitle{font-size:11px;color:var(--text-dim);font-weight:500;transition:all .3s}
-.armory-section-arrow{color:var(--text-dim);font-size:12px;transition:transform .25s}
-.armory-card.open .armory-section-arrow{transform:rotate(180deg)}
-.armory-section-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.armory-card.open .armory-section-body{max-height:2000px}
-.armory-section-inner{padding:0 16px 20px}
-.armory-card.collapsed .armory-card-header{padding:16px 8px;gap:4px}
-.armory-card.collapsed .armory-card-icon{font-size:18px}
-.armory-card.collapsed .armory-card-title{font-size:11px}
-.armory-card.collapsed .armory-card-subtitle{font-size:0;opacity:0;margin:0}
-.armory-card.collapsed .armory-section-arrow{display:none}
-.armory-objection{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
-.armory-objection:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-.armory-they-say{font-size:13px;color:var(--ft-yellow);font-style:italic;margin-bottom:6px}
-.armory-they-say::before{content:'The concern: ';font-weight:700;font-style:normal;color:var(--ft-yellow)}
-.armory-you-say{font-size:13px;color:var(--text-secondary);line-height:1.65}
-.armory-you-say::before{content:'In context: ';font-weight:700;color:var(--ft-green)}
-.armory-discovery{margin-bottom:14px}
-.armory-persona{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--ft-blue);margin-bottom:8px}
-.armory-owner{display:inline;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-dim);font-size:10.5px;margin-left:8px}
-.light-mode .armory-owner{color:#86868b}
-.armory-question{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0 6px 16px;border-left:2px solid rgba(48,127,226,0.3);margin-bottom:6px}
-.armory-stat{display:flex;align-items:center;gap:0;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-.armory-stat:last-child{border-bottom:none}
-.armory-stat-number{font-size:22px;font-weight:800;color:var(--ft-red);flex-shrink:0;width:90px;text-align:right;padding-right:18px}
-.armory-stat-divider{width:2px;align-self:stretch;background:linear-gradient(180deg,transparent,rgba(218,41,28,0.4),transparent);flex-shrink:0;margin-right:18px}
-.armory-stat-text{font-size:13px;color:var(--text-secondary);line-height:1.6}
-.armory-source{display:inline-block;margin-top:4px;font-size:11px;color:var(--ft-blue);text-decoration:none;opacity:.7;transition:opacity .2s}
-.armory-source:hover{opacity:1;text-decoration:underline}
-.armory-stack-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:8px}
-.armory-stack-icon{font-size:18px;flex-shrink:0}
-.armory-stack-name{font-size:13px;font-weight:600;color:#fff;min-width:100px}
-.armory-stack-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
-.armory-next-step{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
-.armory-next-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--ft-red),var(--ft-blue));color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.armory-next-text{font-size:13px;color:var(--text-secondary);line-height:1.6}
-.armory-next-text strong{color:#fff}
-.armory-back{display:flex;justify-content:center;margin-top:24px}
-.armory-back-btn{padding:12px 28px;border-radius:24px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
-.armory-back-btn:hover{background:rgba(255,255,255,0.1)}
 
 /* ── SCROLLBAR ── */
 .main::-webkit-scrollbar,.info-panel::-webkit-scrollbar{width:6px}
@@ -337,28 +278,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .light-mode .summary-cta.secondary{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.1);color:#6e6e73}
 .light-mode .summary-cta.secondary:hover{background:rgba(0,0,0,0.08)}
 
-.light-mode .armory-overlay{background:rgba(255,255,255,0.96)}
-.light-mode .armory-title{color:#1d1d1f}
-.light-mode .armory-card-title{color:#1d1d1f}
-.light-mode .armory-close{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.1)}
-.light-mode .armory-close:hover{background:rgba(0,0,0,0.08)}
-.light-mode .armory-stats-hero{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.08)}
-.light-mode .armory-stat{border-bottom-color:rgba(0,0,0,0.05)}
-.light-mode .armory-card{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.08)}
-.light-mode .armory-card-header:hover{background:rgba(0,0,0,0.03)}
-.light-mode .armory-objection{border-bottom-color:rgba(0,0,0,0.05)}
-.light-mode .armory-subtitle{color:#48484a}
-.light-mode .armory-stat-text{color:#3a3a3c}
-.light-mode .armory-question{color:#3a3a3c}
-.light-mode .armory-you-say{color:#3a3a3c}
-.light-mode .armory-they-say{color:#b8860b}
-.light-mode .armory-card-subtitle{color:#6e6e73}
-.light-mode .armory-next-text strong{color:#1d1d1f}
-.light-mode .armory-next-text{color:#3a3a3c}
-.light-mode .armory-back-btn{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.1)}
-.light-mode .armory-back-btn:hover{background:rgba(0,0,0,0.08)}
-.light-mode .armory-stack-item{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.06)}
-.light-mode .armory-stack-name{color:#1d1d1f}
 
 .light-mode .seller-tip{background:rgba(144,99,205,0.06);border-color:rgba(144,99,205,0.15);color:#7c4dbd}
 .light-mode .status-badge.zone-bottom-label{background:var(--bg-dark)!important}
@@ -610,7 +529,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 <div class="sim-overlay" id="socSim">
   <div class="glitch-streams" id="glitchStreams"></div>
-  <button class="sim-close" id="socClose" onclick="closeSocSim()">&times;</button>
   <div class="sim-inner" id="socInner"></div>
   <div class="attacker-reveal" id="attackerReveal">
     <div class="ar-frame">
@@ -668,141 +586,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
     <div class="summary-closer">How do we ensure the tool calls these agents make are trusted? How do we validate the data they retrieve? How do we protect against prompt injection, poisoned sources, and excessive permissions?<br><br><em>You wouldn't let network traffic flow without a firewall — the same discipline now has to extend to how agents reason, retrieve, and act.</em></div>
     <div class="summary-actions">
       <button class="summary-cta secondary" id="summaryRestart">↺ Restart Talk</button>
-      <button class="summary-cta" id="openArmory">Discovery &amp; Next Steps →</button>
-    </div>
-  </div>
-</div>
-
-<div class="armory-overlay" id="armoryOverlay">
-  <div class="armory-close" id="armoryClose">&times;</div>
-  <div class="armory-container">
-    <div class="armory-header">
-      <div class="armory-eyebrow">THE ARMORY</div>
-      <div class="armory-title">The cost of doing nothing.</div>
-      <div class="armory-subtitle">The numbers worth knowing — the questions worth asking — and what to do next.</div>
-    </div>
-
-    <div class="armory-stats-hero">
-      <div class="armory-stat">
-        <span class="armory-stat-number">$4.88M</span>
-        <span class="armory-stat-divider"></span><span class="armory-stat-text">Average cost of a data breach in 2024. Breaches involving shadow data cost 16% more ($5.27M). <a class="armory-source" href="https://newsroom.ibm.com/2024-07-30-ibm-report-escalating-data-breach-disruption-pushes-costs-to-new-highs" target="_blank">IBM Cost of a Data Breach Report 2024</a></span>
-      </div>
-      <div class="armory-stat">
-        <span class="armory-stat-number">1 in 5</span>
-        <span class="armory-stat-divider"></span><span class="armory-stat-text">Breaches are now linked to shadow AI — unsanctioned AI tools adopted without security oversight — adding up to $670K per incident. <a class="armory-source" href="https://www.ibm.com/think/insights/hidden-risk-shadow-data-ai-higher-costs" target="_blank">IBM Cost of a Data Breach Report 2025</a></span>
-      </div>
-      <div class="armory-stat">
-        <span class="armory-stat-number">292 days</span>
-        <span class="armory-stat-divider"></span><span class="armory-stat-text">Average time to identify and contain a breach involving stolen or compromised credentials — the kind leaked through unmonitored AI prompts. <a class="armory-source" href="https://newsroom.ibm.com/2024-02-21-IBM-Report-Identity-Comes-Under-Attack,-Straining-Enterprises-Recovery-Time-from-Breaches" target="_blank">IBM X-Force Threat Intelligence 2024</a></span>
-      </div>
-      <div class="armory-stat">
-        <span class="armory-stat-number">50%</span>
-        <span class="armory-stat-divider"></span><span class="armory-stat-text">By 2028, half of all enterprise incident response efforts will involve security issues from AI applications — up from near-zero today. <a class="armory-source" href="https://www.gartner.com/en/newsroom/press-releases/2026-03-17-gartner-predicts-ai-applications-will-drive-50-percent-of-cybersecurity-incident-response-efforts-by-2028" target="_blank">Gartner, March 2026</a></span>
-      </div>
-      <div class="armory-stat">
-        <span class="armory-stat-number">40%</span>
-        <span class="armory-stat-divider"></span><span class="armory-stat-text">Of AI data breaches will stem from cross-border generative AI misuse by 2027 — a governance gap most organizations haven't addressed. <a class="armory-source" href="https://www.gartner.com/en/newsroom/press-releases/2025-02-17-gartner-predicts-forty-percent-of-ai-data-breaches-will-arise-from-cross-border-genai-misuse-by-2027" target="_blank">Gartner, February 2025</a></span>
-      </div>
-    </div>
-
-    <div class="armory-cards">
-      <div class="armory-card" id="armDiscovery">
-        <div class="armory-card-header" onclick="toggleArmorySection('armDiscovery')">
-          <span class="armory-card-icon">🎯</span>
-          <span class="armory-card-title">Questions to Take Back</span>
-          <span class="armory-card-subtitle">By outcome</span>
-          <span class="armory-section-arrow">▼</span>
-        </div>
-        <div class="armory-section-body"><div class="armory-section-inner">
-          <div class="armory-discovery">
-            <div class="armory-persona">Visibility &amp; Inventory <span class="armory-owner">— typically owned by Security Operations</span></div>
-            <div class="armory-question">Which AI tools are your teams using today? Do you have a way to track that centrally?</div>
-            <div class="armory-question">Are any of your security tools — SIEM, SOAR, or analyst workflows — using AI or LLM capabilities today?</div>
-            <div class="armory-question">If they are, do you have visibility into what data those tools send to external AI models?</div>
-            <div class="armory-question">How many of your developers use AI coding assistants — Copilot, Cursor, or similar?</div>
-          </div>
-          <div class="armory-discovery">
-            <div class="armory-persona">Policy &amp; Enforcement <span class="armory-owner">— typically owned by Security Leadership</span></div>
-            <div class="armory-question">Do you have an AI usage policy? How is it enforced — technically or just on paper?</div>
-            <div class="armory-question">Where does AI fit in your security architecture — is it treated like any other SaaS app, or does it have its own controls?</div>
-          </div>
-          <div class="armory-discovery">
-            <div class="armory-persona">Output &amp; Operational Risk <span class="armory-owner">— typically owned by Engineering &amp; SecOps</span></div>
-            <div class="armory-question">What code context gets sent with each completion? Have you reviewed what's included?</div>
-            <div class="armory-question">What's the process when an AI tool suggests code that introduces a vulnerability — would anyone catch it?</div>
-            <div class="armory-question">How would you detect if an AI-assisted workflow produced a recommendation based on manipulated input?</div>
-          </div>
-          <div class="armory-discovery">
-            <div class="armory-persona">Audit &amp; Compliance <span class="armory-owner">— typically owned by Compliance / GRC</span></div>
-            <div class="armory-question">If a regulator asked for a log of AI interactions involving customer data from the last 90 days, could you produce it?</div>
-            <div class="armory-question">Do any of your compliance frameworks — SOC 2, HIPAA, PCI-DSS — require controls around AI usage? How are you addressing that?</div>
-            <div class="armory-question">Do you have audit trails for AI interactions that touch regulated data?</div>
-            <div class="armory-question">For organizations with data residency requirements: are those enforced for AI API calls, or just for traditional data flows?</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="armory-card" id="armObjections">
-        <div class="armory-card-header" onclick="toggleArmorySection('armObjections')">
-          <span class="armory-card-icon">⚖️</span>
-          <span class="armory-card-title">Common Concerns</span>
-          <span class="armory-card-subtitle">Pushback &amp; perspective</span>
-          <span class="armory-section-arrow">▼</span>
-        </div>
-        <div class="armory-section-body"><div class="armory-section-inner">
-          <div class="armory-objection">
-            <div class="armory-they-say">"We're not really using AI that much."</div>
-            <div class="armory-you-say">That's worth validating. IBM found that 1 in 5 breaches now involve shadow AI — tools adopted without security's knowledge. The question isn't whether your teams are using AI. It's whether you have visibility into how much and what data is going in. Can you produce a report of every AI interaction from the last 90 days? If not, that's the gap worth exploring.</div>
-          </div>
-          <div class="armory-objection">
-            <div class="armory-they-say">"We already have DLP for this."</div>
-            <div class="armory-you-say">DLP is a strong foundation — and endpoint DLP can absolutely see what users type into AI tools. The gap isn't visibility, it's context. DLP classifies data patterns, but it doesn't understand prompt structure. It can't detect a prompt injection hiding inside a document. It doesn't validate whether an AI response contains hallucinated data or insecure code before it reaches a downstream system. The proxy adds an AI-aware governance layer on top of what DLP already does well — they're complementary, not competing.</div>
-          </div>
-          <div class="armory-objection">
-            <div class="armory-they-say">"Our AI provider says our data is safe."</div>
-            <div class="armory-you-say">Provider commitments matter — opt-out of training, data encryption, SOC 2 compliance. But those controls protect data at rest on the provider's side. They don't prevent an employee from putting sensitive data into a prompt in the first place. They don't detect prompt injection attacks. And they don't give you a centralized audit trail across multiple providers. The proxy is your governance layer — it works regardless of which provider or model your teams choose.</div>
-          </div>
-          <div class="armory-objection">
-            <div class="armory-they-say">"This feels like it would slow down our developers."</div>
-            <div class="armory-you-say">Fair concern. No one wants to be the person who makes developers less productive. In practice, inline inspection adds low single-digit milliseconds — well under the variance developers already experience with API latency. The more honest conversation is about risk tolerance: what's the cost of a credential leak requiring a full key rotation across every service? That's weeks of developer time. The proxy is an insurance policy that's invisible when things go right and invaluable when they don't.</div>
-          </div>
-          <div class="armory-objection">
-            <div class="armory-they-say">"We'll just block AI tools entirely."</div>
-            <div class="armory-you-say">Some organizations try this, and it works in highly regulated environments with strong endpoint controls. But for most, it creates shadow AI — developers using personal accounts, browser-based tools, or API keys that bypass corporate controls entirely. You end up with less visibility, not more. The alternative is governed access: approved tools, clear policies, and a proxy that enforces them. Let your teams use AI productively while maintaining the controls your security posture requires.</div>
-          </div>
-          <div class="armory-objection">
-            <div class="armory-they-say">"We'll build something in-house."</div>
-            <div class="armory-you-say">That's a valid approach for organizations with deep platform engineering teams. The question is scope and maintenance: prompt injection techniques evolve weekly, new models launch monthly, and OWASP updates their LLM risk framework regularly. Building the initial proxy is achievable — keeping up with the threat landscape, maintaining detection signatures, and supporting every model API your teams adopt is the long-term cost. Most organizations find that's not where they want their security engineers focused.</div>
-          </div>
-        </div></div>
-      </div>
-
-      <div class="armory-card" id="armNext">
-        <div class="armory-card-header" onclick="toggleArmorySection('armNext')">
-          <span class="armory-card-icon">🚀</span>
-          <span class="armory-card-title">Next Steps</span>
-          <span class="armory-card-subtitle">How to move forward</span>
-          <span class="armory-section-arrow">▼</span>
-        </div>
-        <div class="armory-section-body"><div class="armory-section-inner">
-          <div class="armory-next-step">
-            <span class="armory-next-num">1</span>
-            <span class="armory-next-text"><strong>AI Crisis Room Experience.</strong> A hands-on, simulated exercise that walks your cross-functional teams through a realistic AI security incident — such as a prompt injection chain leading to data exfiltration. Bring security, engineering, compliance, and leadership into the same room. The exercise surfaces gaps in AI incident response readiness and builds organizational muscle before a real event forces the conversation.</span>
-          </div>
-          <div class="armory-next-step">
-            <span class="armory-next-num">2</span>
-            <span class="armory-next-text"><strong>Proof of Value.</strong> Deploy the proxy in monitor-only mode against 2-3 of your active AI use cases. No blocking, no disruption — just visibility. Let the data answer the questions you couldn't answer earlier: what's being sent, to which models, by whom, and what's coming back.</span>
-          </div>
-          <div class="armory-next-step">
-            <span class="armory-next-num">3</span>
-            <span class="armory-next-text"><strong>Executive Briefing.</strong> Bring what you've learned — from the Crisis Room, the Proof of Value, or both — to your CISO and CTO. A clear, evidence-based picture of your own AI risk posture is the most persuasive starting point for any governance investment, far more than any vendor pitch deck.</span>
-          </div>
-        </div></div>
-      </div>
-    </div>
-
-    <div class="armory-back">
-      <button class="armory-back-btn" id="armoryBack">← Back to Summary</button>
     </div>
   </div>
 </div>
@@ -2059,41 +1842,6 @@ document.getElementById('summaryRestart').onclick = () => {
   goFlow(0);
 };
 
-/* ── ARMORY ── */
-document.getElementById('openArmory').onclick = () => {
-  document.getElementById('summaryOverlay').classList.remove('visible');
-  document.getElementById('armoryOverlay').classList.add('visible');
-};
-document.getElementById('armoryClose').onclick = () => {
-  document.getElementById('armoryOverlay').classList.remove('visible');
-};
-document.getElementById('armoryBack').onclick = () => {
-  document.getElementById('armoryOverlay').classList.remove('visible');
-  document.getElementById('summaryOverlay').classList.add('visible');
-};
-function toggleArmorySection(id) {
-  const card = document.getElementById(id);
-  const cards = document.querySelector('.armory-cards');
-  const allCards = cards.querySelectorAll('.armory-card');
-  const wasOpen = card.classList.contains('open');
-
-  // Close all cards, remove collapsed state
-  allCards.forEach(c => { c.classList.remove('open', 'collapsed'); });
-  cards.classList.remove('has-open');
-  cards.style.gridTemplateColumns = '';
-
-  if (!wasOpen) {
-    card.classList.add('open');
-    cards.classList.add('has-open');
-    // Build grid columns: open card gets 4fr, others get 1fr
-    const cols = Array.from(allCards).map(c => c.classList.contains('open') ? '4fr' : '1fr');
-    cards.style.gridTemplateColumns = cols.join(' ');
-    allCards.forEach(c => { if (!c.classList.contains('open')) c.classList.add('collapsed'); });
-    // Scroll the card into view
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
-  }
-}
-
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', e => {
   if (e.key === 'n' || e.key === 'N') { toggleNotes(); return; }
@@ -2110,7 +1858,7 @@ document.addEventListener('keydown', e => {
     if (summaryUp) { document.getElementById('summaryOverlay').classList.remove('visible'); goFlow(FLOW.length - 1); }
     else goFlow(flowIdx - 1);
   }
-  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); document.getElementById('armoryOverlay').classList.remove('visible'); renderNotes(); }
+  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); renderNotes(); }
 });
 document.getElementById('snToggle').onclick = () => toggleNotes();
 
