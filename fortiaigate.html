@@ -985,7 +985,7 @@ const visited = new Set();
 const FLOW = [
   { type:'slide', id:'agency', color:C.teal },
   { type:'act',   n:1,         color:ACT_COLORS[0] },
-  { type:'slide', id:'owasp',  color:C.grey },
+  { type:'slide', id:'owasp',  color:C.red },
   { type:'act',   n:2,         color:ACT_COLORS[1] },
   { type:'act',   n:3,         color:ACT_COLORS[2] },
   { type:'act',   n:4,         color:ACT_COLORS[3] },
@@ -1086,8 +1086,8 @@ const SLIDES = {
     </div>
     <div id="agencyStage" style="display:none"></div>
   `},
-  owasp: { accent:C.grey, html:`
-    <div class="slide-eyebrow" style="color:${C.grey}">OPEN WORLDWIDE APPLICATION SECURITY PROJECT</div>
+  owasp: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">OPEN WORLDWIDE APPLICATION SECURITY PROJECT</div>
     <div class="slide-title"><span class="gr">OWASP</span> Top 10 for LLMs</div>
     <div class="slide-sub">Before we walk through the risks, the framework we'll measure them against — the shared language security teams, vendors, and auditors have standardized on.</div>
     <div class="owasp-why">
