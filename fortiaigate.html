@@ -1103,7 +1103,7 @@ const CONNS = [
   ['n3','n5',2,C.yellow], ['n3','n6',2,C.yellow],
   ['n3','n7',3,C.red], ['n3','n8',3,C.red],
   // Act 4: governed flow — org → proxy left edge, proxy right edge → LLM
-  ['n2','n9L',4,C.green], ['n4','n9L',4,C.green], ['n4b','n9L',4,C.green], ['n4c','n9L',4,C.green],
+  ['n1','n9L',4,C.green], ['n2','n9L',4,C.green], ['n2b','n9L',4,C.green], ['n4','n9L',4,C.green], ['n4b','n9L',4,C.green], ['n4c','n9L',4,C.green],
   ['n9R','n3',4,C.green],
 ];
 
@@ -1116,9 +1116,9 @@ const BADGES = [
 /* ═══ STATE ═══ */
 let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, notesOpen = false, sprawlActive = false;
 const SPRAWL_MODELS = [
-  { x:510, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
+  { x:530, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
   { x:650, y:100, icon:ICONS.cpu, label:'Anthropic Claude' },
-  { x:510, y:360, icon:ICONS.cpu, label:'Google Gemini' },
+  { x:530, y:360, icon:ICONS.cpu, label:'Google Gemini' },
   { x:650, y:360, icon:ICONS.cpu, label:'Self-hosted Llama' },
 ];
 const visited = new Set();
