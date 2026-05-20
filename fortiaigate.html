@@ -498,6 +498,14 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
   50%{box-shadow:inset clamp(-3px,-0.3vw,-8px) 0 rgba(255,0,0,0.2),inset clamp(3px,0.3vw,8px) 0 rgba(0,255,255,0.2)}
   100%{box-shadow:none}
 }
+/* Attack-text streams — incident log fragments scrolling across screen */
+.glitch-streams{position:fixed;inset:var(--topbar-h) 0 0 0;overflow:hidden;pointer-events:none;z-index:580}
+.glitch-stream{position:absolute;font-family:ui-monospace,'SF Mono','Fira Code',monospace;font-weight:600;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;pointer-events:none;opacity:0}
+.glitch-stream.typing{opacity:1;animation:stream-in 0.15s ease-out}
+.glitch-stream.fading{transition:opacity 2s ease-out;opacity:0}
+@keyframes stream-in{0%{opacity:0;transform:translateX(-10px)}100%{opacity:1;transform:translateX(0)}}
+.stream-cursor{display:inline-block;width:2px;height:1em;background:currentColor;margin-left:2px;vertical-align:text-bottom;animation:stream-blink 0.4s step-end infinite}
+@keyframes stream-blink{50%{opacity:0}}
 /* Ambient scanlines during Act 3 only — subtle "compromised CRT" backdrop */
 .scanline-ambient{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;pointer-events:none;z-index:80;display:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(218,41,28,0.05) 2px,rgba(218,41,28,0.05) 3px);animation:scanline-amb 7s linear infinite;opacity:.55}
 .scanline-ambient.on{display:block}
@@ -556,6 +564,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 </div>
 
 <div class="scanline-ambient" id="scanlineAmb"></div>
+<div class="glitch-streams" id="glitchStreams"></div>
 <div class="glitch-overlay" id="glitchOverlay">
   <div class="scanlines"></div>
   <div class="rgb-split"></div>
@@ -1072,6 +1081,7 @@ function goFlow(i){
   document.getElementById('scanlineAmb').classList.toggle('on', onAct3);
   if (onAct3){
     aT(() => triggerGlitch('soft'), 260);
+    aT(() => spawnStream(0), 360);
     startAct3Pulse();
   } else {
     stopAct3Pulse();
@@ -1092,26 +1102,114 @@ function triggerGlitch(intensity){
   setTimeout(() => ov.classList.remove('active','hard','whisper'), dur);
 }
 
+/* Incident-text streams (gaslight-inspired) — type out an attack log fragment then fade */
+const INCIDENT_TEXTS = [
+  /* tier 0 — anomalies */ [
+    'ANOMALY: prompt token count exceeds baseline by 340%',
+    'WARN: unsanctioned model endpoint contacted',
+    'NOTICE: shadow AI tool detected in user-agent',
+    'ALERT: API key fragment in outbound payload',
+    'WARN: prompt entropy spike on coding session',
+    'ANOMALY: SOC copilot calling out-of-policy tool',
+    'INFO: HR assistant queried compensation data 12x',
+  ],
+  /* tier 1 — detections */ [
+    'DETECT: prompt injection signature in document chunk',
+    'ALERT: SIEM credentials present in LLM payload',
+    'WARN: agent tool call attempted write to /etc/',
+    'DETECT: indirect injection via inbound log',
+    'ALERT: coding assistant exfiltrated 2.4MB source',
+    'WARN: model response contained SQL pattern',
+    'DETECT: PII redaction failed on transcript',
+  ],
+  /* tier 2 — breaches */ [
+    'CRITICAL: agent overrode system prompt via reasoning',
+    'BREACH: production credentials sent to public LLM',
+    'EMERGENCY: SOAR ran payload from injected log',
+    'FATAL: agent identity escalated to admin role',
+    'CRITICAL: reverse shell via package install',
+    'BREACH: 40,000+ code snippets to external API',
+    'EMERGENCY: agent self-modified tool authorization',
+  ],
+  /* tier 3 — catastrophic */ [
+    'FATAL: compromised SOC agent disabled detections',
+    'INCIDENT: cross-tenant leak via embedding cache',
+    'CRITICAL: agent forged audit logs',
+    'EMERGENCY: cascading compromise across 8 services',
+    'FATAL: proprietary code in external training set',
+    'INCIDENT: injection chain leaked customer DB',
+    'CRITICAL: AI proxy bypassed via direct CSP API',
+  ],
+];
+const STREAM_COLORS = ['var(--ft-red)','#ff2d2d','var(--ft-silver)','#ff6b6b','var(--ft-teal)'];
+function getIncidentText(tier){
+  const arr = INCIDENT_TEXTS[Math.max(0, Math.min(3, tier))];
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+function spawnStream(tier){
+  const container = document.getElementById('glitchStreams');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = 'glitch-stream';
+  const top = 5 + Math.random() * 80;
+  const left = 2 + Math.random() * 55;
+  const size = 0.7 + Math.random() * 0.7;
+  const color = STREAM_COLORS[Math.floor(Math.random() * STREAM_COLORS.length)];
+  el.style.top = top + '%';
+  el.style.left = left + '%';
+  el.style.fontSize = `clamp(10px, ${size}vw, 20px)`;
+  el.style.color = color;
+  el.style.textShadow = `0 0 ${size * 10}px ${color}`;
+  const cursor = document.createElement('span');
+  cursor.className = 'stream-cursor';
+  el.appendChild(cursor);
+  container.appendChild(el);
+  const text = getIncidentText(tier);
+  let i = 0;
+  el.classList.add('typing');
+  function type(){
+    if (i < text.length){
+      el.insertBefore(document.createTextNode(text[i]), cursor);
+      i++;
+      aT(type, 18 + Math.random() * 28);
+    } else {
+      cursor.remove();
+      aT(() => {
+        el.classList.add('fading');
+        aT(() => { if (el.parentNode) el.remove(); }, 2200);
+      }, 900 + Math.random() * 1600);
+    }
+  }
+  type();
+  const all = container.querySelectorAll('.glitch-stream');
+  if (all.length > 12) all[0].remove();
+}
+function clearGlitchStreams(){
+  const c = document.getElementById('glitchStreams');
+  if (c) c.innerHTML = '';
+}
+
 /* Escalating ambient pulse — fires while in Act 3 only, intensity ramps as user clicks hotspots */
 let act3Tension = 0;
 let act3PulseTimer = null;
 function clearAct3Pulse(){ if (act3PulseTimer){ clearTimeout(act3PulseTimer); act3PulseTimer = null; } }
 function scheduleAct3Pulse(){
   clearAct3Pulse();
-  let intensity, minMs, maxMs;
-  if (act3Tension < 2)      { intensity = 'whisper'; minMs = 9000;  maxMs = 11000; }
-  else if (act3Tension < 5) { intensity = 'soft';    minMs = 7000;  maxMs = 9000;  }
-  else                       { intensity = 'hard';    minMs = 5500;  maxMs = 7500;  }
+  let intensity, minMs, maxMs, tier, streamCount;
+  if (act3Tension < 2)      { intensity = 'whisper'; minMs = 9000;  maxMs = 11000; tier = 0; streamCount = 1; }
+  else if (act3Tension < 5) { intensity = 'soft';    minMs = 7000;  maxMs = 9000;  tier = 1; streamCount = 1 + Math.floor(Math.random() * 2); }
+  else                       { intensity = 'hard';    minMs = 5500;  maxMs = 7500;  tier = 2 + (act3Tension >= 7 ? 1 : 0); streamCount = 2 + Math.floor(Math.random() * 2); }
   const delay = minMs + Math.random() * (maxMs - minMs);
   act3PulseTimer = setTimeout(() => {
     if (curAct === 3 && FLOW[flowIdx] && FLOW[flowIdx].type === 'act'){
       triggerGlitch(intensity);
+      for (let i = 0; i < streamCount; i++) aT(() => spawnStream(tier), i * 180);
       scheduleAct3Pulse();
     }
   }, delay);
 }
 function startAct3Pulse(){ act3Tension = 0; scheduleAct3Pulse(); }
-function stopAct3Pulse(){ clearAct3Pulse(); act3Tension = 0; }
+function stopAct3Pulse(){ clearAct3Pulse(); act3Tension = 0; clearGlitchStreams(); }
 function bumpAct3Tension(){
   if (curAct !== 3 || !FLOW[flowIdx] || FLOW[flowIdx].type !== 'act') return;
   act3Tension = Math.min(act3Tension + 1, 8);
@@ -1230,8 +1328,8 @@ function revealSeq(rootEl, idx, doneFn){
     const s = steps[idx];
     s.classList.add('show');
     s.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    if (s.classList.contains('bad')) triggerGlitch('hard');
-    else if (s.classList.contains('warn')) triggerGlitch('soft');
+    if (s.classList.contains('bad')){ triggerGlitch('hard'); for (let k = 0; k < 3; k++) aT(() => spawnStream(3), k * 220); }
+    else if (s.classList.contains('warn')){ triggerGlitch('soft'); aT(() => spawnStream(2), 120); }
     aT(() => revealSeq(rootEl, idx + 1, doneFn), STEP_MS);
   } else {
     aT(doneFn, 300);
@@ -1346,6 +1444,7 @@ const SOC_SIMS = {
 
 function closeSocSim(){
   clearAgencyTimers();
+  clearGlitchStreams();
   const ov = document.getElementById('socSim');
   ov.classList.remove('show');
   ov.querySelector('#socInner').innerHTML = '';
