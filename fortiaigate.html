@@ -7,7 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-dark: #000000;
+  --bg-dark: #050507;
+  --bg-grad: radial-gradient(ellipse 90% 70% at 50% -10%, #12131b 0%, #08080c 45%, #050507 100%);
   --ft-blue: #307FE2;
   --ft-yellow: #FFB900;
   --ft-red: #DA291C;
@@ -21,14 +22,44 @@
   --text-dim: #48484a;
   --panel-width: 400px;
   --topbar-h: 54px;
+  /* Design tokens — surfaces, borders, motion */
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+  --surface-1: rgba(255,255,255,0.03);
+  --surface-2: rgba(255,255,255,0.05);
+  --surface-glass-bg: rgba(18,20,28,0.62);
+  --surface-glass-border: rgba(255,255,255,0.10);
+  --surface-card-bg: rgba(14,16,24,0.78);
+  --shadow-card: 0 18px 60px rgba(0,0,0,0.55), 0 2px 0 rgba(255,255,255,0.04) inset;
+  --shadow-lift: 0 8px 28px rgba(0,0,0,0.45);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-page: 480ms var(--ease-out-soft);
+}
+.light-mode{
+  --bg-dark: #fafafa;
+  --bg-grad: radial-gradient(ellipse 90% 70% at 50% -10%, #ffffff 0%, #f4f4f6 50%, #ebebef 100%);
+  --border-subtle: rgba(0,0,0,0.06);
+  --border-default: rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.16);
+  --surface-1: rgba(0,0,0,0.03);
+  --surface-2: rgba(0,0,0,0.05);
+  --surface-glass-bg: rgba(255,255,255,0.72);
+  --surface-glass-border: rgba(0,0,0,0.08);
+  --surface-card-bg: rgba(255,255,255,0.92);
+  --shadow-card: 0 18px 60px rgba(0,0,0,0.14), 0 1px 0 rgba(0,0,0,0.04) inset;
+  --shadow-lift: 0 8px 24px rgba(0,0,0,0.10);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{
   font-family:'Inter',system-ui,-apple-system,sans-serif;
   background:var(--bg-dark);
+  background-image:var(--bg-grad);
+  background-attachment:fixed;
   color:var(--text-primary);line-height:1.6;
   -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
 /* ── TOPBAR ── */
@@ -46,7 +77,8 @@ body{
 .timeline-line.completed{background:rgba(162,178,200,0.35)}
 
 /* ── MAIN ── */
-.main{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;transition:padding-right .35s}
+.main{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;transition:padding-right .35s;opacity:1;transform:translateY(0);transition:opacity var(--t-page),transform var(--t-page),padding-right .35s var(--ease-out-soft)}
+.main.flow-enter{opacity:0;transform:translateY(8px)}
 .main.panel-open{padding-right:var(--panel-width)}
 
 /* ── ACT HEADER ── */
@@ -55,7 +87,7 @@ body{
 .act-title{font-size:30px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.2}
 .act-subtitle{font-size:14px;color:var(--text-secondary);line-height:1.75;max-width:940px;margin:0 auto 12px}
 .seller-tip{background:rgba(144,99,205,0.08);border:1px solid rgba(144,99,205,0.18);border-radius:10px;padding:11px 16px;font-size:12.5px;color:#c4a8e8;max-width:940px;margin:0 auto;text-align:left;line-height:1.65}
-.seller-tip::before{content:'💡 KEY INSIGHT';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:4px}
+.seller-tip::before{content:'KEY INSIGHT';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:4px}
 
 /* ── DIAGRAM ── */
 .diagram-wrap{position:relative;max-width:960px;margin:20px auto 0;padding:0 16px}
@@ -71,8 +103,9 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 /* ── NODES ── */
 .node{position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:all .35s;user-select:none;width:95px;margin-left:-47px}
-.node-icon{width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;transition:all .35s}
-.node:hover .node-icon{background:rgba(255,255,255,0.07);transform:translateY(-2px)}
+.node-icon{width:56px;height:56px;border-radius:15px;background:var(--surface-1);border:1px solid var(--border-default);display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;transition:transform .35s var(--ease-out-soft),background .25s,border-color .25s,box-shadow .35s var(--ease-out-soft)}
+.node-icon svg{width:24px;height:24px;color:var(--text-primary);opacity:.92}
+.node:hover .node-icon{background:var(--surface-2);border-color:var(--border-strong);transform:translateY(-3px);box-shadow:var(--shadow-lift)}
 .node-badge{position:absolute;top:-6px;left:-6px;width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;z-index:6}
 .node-badge.opt{font-size:7px;letter-spacing:.3px}
 .node-label{margin-top:5px;font-size:10.5px;font-weight:600;color:var(--text-secondary);text-align:center;max-width:95px;line-height:1.3}
@@ -94,7 +127,8 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .proxy-box-items{display:flex;flex-direction:column;gap:8px;width:100%}
 .proxy-box-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:rgba(60,177,126,0.05);border:1px solid rgba(60,177,126,0.15);cursor:pointer;transition:all .25s}
 .proxy-box-item:hover{background:rgba(60,177,126,0.12);border-color:rgba(60,177,126,0.3)}
-.proxy-box-item .pbi-emoji{font-size:14px;flex-shrink:0}
+.proxy-box-item .pbi-emoji{flex-shrink:0;display:inline-flex}
+.proxy-box-item .pbi-emoji svg{width:16px;height:16px;color:var(--ft-green)}
 .proxy-box-item .pbi-text{display:flex;flex-direction:column;gap:1px}
 .proxy-box-item .pbi-code{font-size:9px;font-weight:700;color:var(--ft-green);letter-spacing:.8px}
 .proxy-box-item .pbi-label{font-size:9px;font-weight:500;color:var(--text-secondary);line-height:1.2}
@@ -128,7 +162,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .panel-body{font-size:13.5px;color:var(--text-secondary);line-height:1.75}
 .panel-body p{margin-bottom:12px}
 .panel-seller{margin-top:18px;padding:13px 15px;border-left:3px solid var(--ft-purple);background:rgba(144,99,205,0.06);border-radius:0 8px 8px 0;font-size:12.5px;color:#c4a8e8;line-height:1.65}
-.panel-seller::before{content:'💡 WHAT TO TAKE AWAY';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:5px}
+.panel-seller::before{content:'WHAT TO TAKE AWAY';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:5px}
 
 /* ── GLOSSARY TOOLTIPS (floating approach — avoids all overflow clipping) ── */
 .g-term{border-bottom:2px dotted rgba(48,127,226,0.55);cursor:help;position:relative;display:inline}
@@ -258,7 +292,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .theme-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
 
 /* ── LIGHT MODE ── */
-.light-mode{--bg-dark:#ffffff;--text-primary:#1d1d1f;--text-secondary:#6e6e73;--text-dim:#aeaeb2;--ft-grey:#aeaeb2}
+.light-mode{--text-primary:#1d1d1f;--text-secondary:#6e6e73;--text-dim:#aeaeb2;--ft-grey:#aeaeb2}
 
 .light-mode .topbar{background:rgba(255,255,255,0.88);border-bottom-color:rgba(0,0,0,0.08)}
 .light-mode .topbar-title{color:#1d1d1f}
@@ -342,8 +376,9 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .light-mode .proxy-box-item:hover{background:rgba(60,177,126,0.12);border-color:rgba(60,177,126,0.35)}
 
 /* ── SLIDE LAYER (presenter content slides) ── */
-.slide-layer{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;display:none;flex-direction:column;align-items:center;padding:0 28px;transition:padding-right .35s}
+.slide-layer{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;display:none;flex-direction:column;align-items:center;padding:0 28px;opacity:1;transform:translateY(0);transition:opacity var(--t-page),transform var(--t-page),padding-right .35s var(--ease-out-soft)}
 .slide-layer.show{display:flex}
+.slide-layer.flow-enter{opacity:0;transform:translateY(8px)}
 .slide-layer.panel-open{padding-right:var(--panel-width)}
 .slide-inner{max-width:1040px;width:100%;margin:0 auto;padding:34px 0 4px;flex:1}
 .slide-eyebrow{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;text-align:center;margin-bottom:8px}
@@ -378,8 +413,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .cmp-col.demo-pick{cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
 .cmp-col.demo-pick:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.35)}
 .cmp-cta{margin-top:14px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.85}
-.demo-stage{max-width:860px;margin:0 auto;padding:22px 26px 20px;background:rgba(10,12,20,0.92);border:1px solid rgba(255,255,255,0.09);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.55)}
-.light-mode .demo-stage{background:rgba(255,255,255,0.94);border-color:rgba(0,0,0,0.08);box-shadow:0 12px 40px rgba(0,0,0,0.18)}
+.demo-stage{max-width:860px;margin:0 auto;padding:22px 26px 20px;background:var(--surface-glass-bg);border:1px solid var(--surface-glass-border);border-radius:18px;box-shadow:var(--shadow-card);backdrop-filter:saturate(140%) blur(18px);-webkit-backdrop-filter:saturate(140%) blur(18px)}
 .demo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .demo-mode{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
 .demo-back{font-size:12px;font-weight:600;color:var(--text-secondary);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:7px 15px;cursor:pointer;transition:all .2s}
@@ -787,6 +821,29 @@ const C = {
 const ACT_COLORS = [C.blue, C.yellow, C.red, C.green];
 const ACT_RGB = ['48,127,226','255,185,0','218,41,28','60,177,126'];
 
+/* Inline line-icon set (Lucide-style, 24x24, stroke=1.75, currentColor) — replaces emoji */
+const _ic = (p) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const ICONS = {
+  barChart:      _ic('<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'),
+  search:        _ic('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
+  shield:        _ic('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+  shieldCheck:   _ic('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>'),
+  cpu:           _ic('<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="15" x2="22" y2="15"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="15" x2="4" y2="15"/>'),
+  code:          _ic('<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>'),
+  chat:          _ic('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+  building:      _ic('<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/><line x1="8" y1="6" x2="8.01" y2="6"/><line x1="12" y1="6" x2="12.01" y2="6"/><line x1="16" y1="6" x2="16.01" y2="6"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/>'),
+  upload:        _ic('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'),
+  download:      _ic('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
+  fileX:         _ic('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9.5" y1="13.5" x2="14.5" y2="18.5"/><line x1="14.5" y1="13.5" x2="9.5" y2="18.5"/>'),
+  shuffle:       _ic('<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>'),
+  alertTriangle: _ic('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+  zapOff:        _ic('<polyline points="12.41 6.75 13 2 10.57 4.92"/><polyline points="18.57 12.91 21 10 15.66 10"/><polyline points="8 8 3 14 12 14 11 22 16 16"/><line x1="1" y1="1" x2="23" y2="23"/>'),
+  lock:          _ic('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'),
+  eye:           _ic('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'),
+  zap:           _ic('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+  bulb:          _ic('<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 7 7c0 3-2 5-3 6.5V18H8v-2.5C7 14 5 12 5 9a7 7 0 0 1 7-7z"/>'),
+};
+
 /* ═══ GLOSSARY ═══ */
 const GLOSS = {
   'LLM':'Large Language Model. A type of AI trained on massive text datasets that can understand and generate human language. GPT-4, Claude, Gemini, and Llama are examples.',
@@ -901,44 +958,44 @@ function getZones(act) {
 /* ═══ NODES ═══ */
 const NODES = [
   // ── ACT 1: The New Stack ──
-  { id:'n1', badge:'1', icon:'📊', label:'Log Sources',
+  { id:'n1', badge:'1', icon:ICONS.barChart, label:'Log Sources',
     x:100, y:75, act:1, color:C.blue, accentRgb:ACT_RGB[0],
     title:'① Log Sources', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>Enterprises generate massive amounts of log data every day — from firewalls, endpoints, cloud services, identity providers, and applications.</p><p>These logs are the raw material of security operations — but they arrive in dozens of formats and volumes that overwhelm human analysts. ${g('Log normalization')} is the first step: converting all this data into a consistent format for analysis.</p>`,
     seller:`Logs are the raw footage of everything happening in your network. The challenge has never been collecting them — it's making sense of them at scale. That's where AI quietly enters the picture, often inside the security tools you already own.`
   },
-  { id:'n2', badge:'2', icon:'🔍', label:'SIEM Platform',
+  { id:'n2', badge:'2', icon:ICONS.search, label:'SIEM Platform',
     x:215, y:75, act:1, color:C.blue, accentRgb:ACT_RGB[0],
     title:'② SIEM Platform', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>A ${g('SIEM')} platform ingests logs, normalizes them, and applies correlation rules to detect suspicious patterns.</p><p>Modern SIEMs increasingly use AI/${g('LLM')} capabilities for log normalization, natural language querying, and automated alert triage. This means AI data flows are already happening inside your security stack — often without an explicit AI governance review.</p>`,
     seller:`Worth checking: is your SIEM using AI features today? Most modern SIEMs have quietly embedded LLM capabilities for triage, summarization, and natural-language search — which means AI data flows are already happening inside your security stack, whether or not anyone formally approved it.`
   },
-  { id:'n2b', badge:'3', icon:'🛡️', label:'SOC Copilot',
+  { id:'n2b', badge:'3', icon:ICONS.shieldCheck, label:'SOC Copilot',
     x:330, y:75, act:1, color:C.blue, accentRgb:ACT_RGB[0],
     title:'③ SOC Analyst Copilot', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>${g('SOC')} analysts increasingly use AI copilots to investigate alerts, summarize incidents, write detection rules, and query logs in natural language.</p><p>The AI has access to security telemetry and threat intelligence — sensitive attack data, IPs, and vulnerability details flow to external models with every query.</p>`,
     seller:`SOC copilots are a fast-growing category. If your analysts are using AI to investigate incidents, that's likely happening with real security telemetry — IPs, usernames, attack patterns — leaving your environment with every query. The adoption itself isn't the problem; the absence of a governance layer around it is.`
   },
-  { id:'n3', badge:'5', icon:'🧠', label:'LLM / AI Model',
+  { id:'n3', badge:'5', icon:ICONS.cpu, label:'LLM / AI Model',
     x:670, y:215, act:1, color:C.teal, accentRgb:'44,204,211',
     getX(act) { return act < 4 ? 670 : 820; },
     title:'⑤ LLM / AI Model', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>An ${g('LLM')} — Large Language Model — is a massive neural network that understands natural language, generates responses, writes code, and reasons about problems.</p><p>OpenAI, Anthropic, Google, and open-source models (Llama, Mistral) are the engines behind enterprise AI. The ${g('OWASP Top 10 for LLMs')} catalogues the top security risks these models introduce.</p>`,
     seller:`The model itself isn't the risk — it's what goes <em>into</em> it (prompts with sensitive data) and what comes <em>out</em> (responses that may be wrong, leak training data, or carry an injection downstream). The model is a black box you don't control. The only place you <em>can</em> control is what sits in front of it.`
   },
-  { id:'n4', badge:'4', icon:'💻', label:'Coding Assistant',
+  { id:'n4', badge:'4', icon:ICONS.code, label:'Coding Assistant',
     x:100, y:300, act:1, color:C.blue, accentRgb:ACT_RGB[0],
     title:'④ Coding Assistant', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>Developers use AI ${g('coding assistants')} to autocomplete code, generate functions, explain codebases, and debug issues.</p><p>These tools send code context — including proprietary source code — to LLM APIs with every keystroke. A developer asking the AI to "fix this function" sends the entire file, including API keys, database credentials, and business logic. This is textbook ${g('sensitive information disclosure')} (${g('OWASP LLM06')}).</p>`,
     seller:`If your developers use Copilot, Cursor, or any AI coding tool, every accepted suggestion is a round-trip to an external API — carrying surrounding code context, often more than the developer realizes. The productivity gain is real; the data egress is too. Both need to be true at once.`
   },
-  { id:'n4b', badge:'opt', icon:'💬', label:'Enterprise Chatbot',
+  { id:'n4b', badge:'opt', icon:ICONS.chat, label:'Enterprise Chatbot',
     x:215, y:300, act:1, color:C.blue, accentRgb:ACT_RGB[0], optional:true,
     title:'Enterprise Chatbot', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>Organizations deploy AI chatbots for IT helpdesk, customer support, and knowledge base search.</p><p>These chatbots access internal documents, customer data, and business information. Every query — and the context behind it — flows to an external AI model. Classic ${g('OWASP LLM06')} exposure at scale.</p>`,
     seller:`Enterprise chatbots typically have access to sensitive data sources across the org — knowledge bases, ticketing systems, customer records. Two questions worth answering internally: what data sources are connected to those bots today, and who is authorized to query them?`
   },
-  { id:'n4c', badge:'opt', icon:'🏢', label:'HR Assistant',
+  { id:'n4c', badge:'opt', icon:ICONS.building, label:'HR Assistant',
     x:330, y:300, act:1, color:C.blue, accentRgb:ACT_RGB[0], optional:true,
     title:'HR Policy Assistant', tagLabel:'THE NEW STACK', tagColor:C.blue,
     body:`<p>HR teams deploy AI assistants to answer employee questions about company policies — PTO, benefits, severance, compensation bands, performance review processes.</p><p>These assistants are connected to internal policy documents, employee handbooks, and sometimes HR systems containing sensitive personnel data. When an employee asks "What's the severance policy for my level?" or a manager asks "What's the process for a performance improvement plan?" — the prompt and the response both contain highly sensitive information.</p><p>This is a perfect storm for ${g('OWASP LLM06')}: the prompts contain personal context, and the responses surface confidential company policies that may not be appropriate for all audiences.</p>`,
@@ -946,25 +1003,25 @@ const NODES = [
   },
 
   // ── ACT 2: The Blind Spot ──
-  { id:'n5', badge:'6', icon:'📤', label:'Data in Prompts',
+  { id:'n5', badge:'6', icon:ICONS.upload, label:'Data in Prompts',
     x:800, y:50, act:2, color:C.yellow, accentRgb:ACT_RGB[1],
     title:'⑥ Data in Prompts (LLM06)', tagLabel:'BLIND SPOT', tagColor:C.yellow,
     body:`<p>Every prompt can contain sensitive information: proprietary source code, customer ${g('PII')}, financial data, security telemetry, internal strategies.</p><p>This is ${g('sensitive information disclosure')} — ${g('OWASP LLM06')} — at massive scale. A developer "fixing this function" sends the entire file. A SOC analyst "summarizing this incident" sends raw security events with IPs, usernames, and attack patterns.</p><p>OWASP ranks this as critical because the data permanently leaves the organization's control.</p>`,
     seller:`Make it concrete: every time a developer hits Tab to accept a code suggestion, source code left the building. That's OWASP LLM06 — Sensitive Information Disclosure — happening thousands of times a day in most organizations, with no audit trail.`
   },
-  { id:'n6', badge:'7', icon:'📥', label:'Data in Responses',
+  { id:'n6', badge:'7', icon:ICONS.download, label:'Data in Responses',
     x:800, y:160, act:2, color:C.yellow, accentRgb:ACT_RGB[1],
     title:'⑦ Insecure Output (LLM02)', tagLabel:'BLIND SPOT', tagColor:C.yellow,
     body:`<p>AI responses can leak training data, ${g('hallucination','g-below')} confidential info, generate insecure code, or give incorrect security guidance.</p><p>This maps to ${g('insecure output handling')} — ${g('OWASP LLM02')}. An LLM might suggest code with SQL injection. A SOC copilot might misclassify a critical alert. An HR assistant might surface confidential compensation data or severance policies to an unauthorized employee.</p><p>When downstream systems (${g('SOAR')}, CI/CD) consume LLM output without validation, the blast radius expands — ${g('OWASP LLM08')}: ${g('excessive agency')}.</p>`,
     seller:`Two questions to take back to your team: if an AI coding assistant suggests a fix that introduces a vulnerability, where in your SDLC does it get caught? And if a SOC copilot misclassifies an alert as benign that isn't, what's the safety net? Both are OWASP LLM02 — Insecure Output Handling — in everyday clothing.`
   },
-  { id:'n6b', badge:'opt', icon:'📋', label:'No Audit Trail',
+  { id:'n6b', badge:'opt', icon:ICONS.fileX, label:'No Audit Trail',
     x:800, y:270, act:2, color:C.yellow, accentRgb:ACT_RGB[1], optional:true,
     title:'No Audit Trail', tagLabel:'BLIND SPOT', tagColor:C.yellow,
     body:`<p>Most organizations have no centralized log of which employees use which AI tools, what data is sent, or whether AI outputs are used in production.</p><p>A compliance nightmare for ${g('GDPR')}, HIPAA, SOX, PCI-DSS. Regulators are asking: <em>"Show me your AI governance controls."</em> Most can't.</p>`,
     seller:`The compliance question lands the point quickly: if a regulator asked you for a report of every AI interaction involving customer data over the last 90 days, could you produce it? Most organizations couldn't — and that gap is itself a finding, regardless of whether a breach has occurred.`
   },
-  { id:'n6c', badge:'opt', icon:'🔀', label:'Model Sprawl',
+  { id:'n6c', badge:'opt', icon:ICONS.shuffle, label:'Model Sprawl',
     x:800, y:380, act:2, color:C.yellow, accentRgb:ACT_RGB[1], optional:true,
     title:'Model Sprawl', tagLabel:'BLIND SPOT', tagColor:C.yellow,
     body:`<p>Enterprises use multiple AI providers simultaneously — each with different data handling policies, retention periods, and security postures.</p><p>${g('Model sprawl')} means no single point of control — and each provider introduces its own ${g('OWASP Top 10 for LLMs')} risks.</p>`,
@@ -972,13 +1029,13 @@ const NODES = [
   },
 
   // ── ACT 3: The Wake-Up Call ──
-  { id:'n7', badge:'8', icon:'🚨', label:'Data Exfiltration',
+  { id:'n7', badge:'8', icon:ICONS.alertTriangle, label:'Data Exfiltration',
     x:670, y:100, act:3, color:C.red, accentRgb:ACT_RGB[2],
     title:'⑧ Sensitive Data Exfiltration (LLM06)', tagLabel:'WAKE-UP CALL', tagColor:C.red,
     body:`<p>A developer refactors a microservice using a coding assistant. The AI sends the entire codebase — hardcoded database credentials, internal API endpoints, proprietary algorithms — to a third-party LLM API.</p><p>That data is now outside the organization's control — potentially used for model training, stored in a jurisdiction violating ${g('data residency')}, or accessible to the provider's employees.</p><p>This is ${g('OWASP LLM06')} at enterprise scale. A financial firm discovered 40,000+ code snippets with customer account logic sent to an external AI over 6 months.</p>`,
     seller:`Sit with the financial-services example for a moment: 40,000 code snippets sent to an external AI over six months — credentials, customer logic, proprietary algorithms — none of it inventoried, none of it recoverable. That's OWASP LLM06 at enterprise scale, and it's almost always invisible until someone goes looking.`
   },
-  { id:'n8', badge:'9', icon:'💀', label:'Automation Gone Wrong',
+  { id:'n8', badge:'9', icon:ICONS.zapOff, label:'Automation Gone Wrong',
     x:670, y:335, act:3, color:C.red, accentRgb:ACT_RGB[2],
     title:'⑨ SOC Automation Gone Wrong (LLM01+LLM08)', tagLabel:'WAKE-UP CALL', tagColor:C.red,
     body:`<p>A SOC team deploys AI-powered automated remediation. The LLM analyzes alerts and executes response playbooks.</p><p>A ${g('prompt injection')} (${g('OWASP LLM01')}) embedded in a malicious log entry manipulates the AI into isolating production servers and disabling security controls.</p><p>Two OWASP risks combined: LLM01 (Prompt Injection) as the attack vector, LLM08 (${g('Excessive Agency')}) as the enabler. The AI had permissions to cause damage because no proxy validated its outputs.</p>`,
@@ -986,47 +1043,47 @@ const NODES = [
   },
 
   // ── ACT 4: The Control Point ──
-  { id:'n9', badge:'', icon:'🛡️', label:'LLM Proxy',
+  { id:'n9', badge:'', icon:ICONS.shield, label:'LLM Proxy',
     x:560, y:103, act:4, color:C.green, accentRgb:ACT_RGB[3], isProxyBox:true,
     title:'The LLM Proxy — AI Gateway', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>The ${g('AI proxy')} sits between your users and the AI models they call — inspecting, securing, and governing every interaction.</p><p>Click any capability below to learn more about how it addresses the ${g('OWASP Top 10 for LLMs')}.</p><p>This is the single control point for all AI governance — prompt security, data protection, output validation, cost control, and intelligent routing. One policy engine. Every interaction governed.</p>`,
     seller:`The frame that lands fastest with most security teams: you wouldn't let network traffic flow without a firewall — so why let AI traffic flow without a proxy? One gateway, every interaction governed, regardless of which model or provider your teams choose tomorrow.<br><br><strong>The fabric parallel.</strong> A unified security fabric gave network operations one console, one policy model, one skillset across on-prem and cloud. AI security is heading the opposite way — a different guardrail product per CSP (Google Model Armor, AWS Bedrock Guardrails, Azure Content Safety), each with its own config language, audit format, and team to run it. The question worth asking your own org: are you about to forgo centralized control and visibility for the CSPs' offerings — again? A common AI proxy is the fabric play for AI-SecOps.`,
     proxyItems: [
-      { emoji:'🛡️', code:'LLM01', label:'Prompt Inspection', nodeId:'n9a' },
-      { emoji:'🔍', code:'LLM02', label:'Output Validation', nodeId:'n11' },
-      { emoji:'⚡', code:'LLM04', label:'Rate Limiting & Cost Control', nodeId:'n11b' },
-      { emoji:'🔒', code:'LLM06', label:'DLP & Data Protection', nodeId:'n10' },
-      { emoji:'🔀', code:'', label:'LLM Routing', nodeId:'n11c' }
+      { emoji:ICONS.shieldCheck, code:'LLM01', label:'Prompt Inspection', nodeId:'n9a' },
+      { emoji:ICONS.eye,         code:'LLM02', label:'Output Validation', nodeId:'n11' },
+      { emoji:ICONS.zap,         code:'LLM04', label:'Rate Limiting & Cost Control', nodeId:'n11b' },
+      { emoji:ICONS.lock,        code:'LLM06', label:'DLP & Data Protection', nodeId:'n10' },
+      { emoji:ICONS.shuffle,     code:'',      label:'LLM Routing', nodeId:'n11c' }
     ]
   },
   // Invisible edge anchors for proxy box connectors
   { id:'n9L', badge:'', icon:'', label:'', x:480, y:243, act:4, color:C.green, accentRgb:ACT_RGB[3], isEdgeAnchor:true },
   { id:'n9R', badge:'', icon:'', label:'', x:640, y:243, act:4, color:C.green, accentRgb:ACT_RGB[3], isEdgeAnchor:true },
-  { id:'n9a', badge:'', icon:'🛡️', label:'Prompt Inspection',
+  { id:'n9a', badge:'', icon:ICONS.shieldCheck, label:'Prompt Inspection',
     x:530, y:140, act:4, color:C.green, accentRgb:ACT_RGB[3], isHidden:true,
     title:'Prompt Inspection (LLM01)', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>The AI proxy scans every prompt for ${g('prompt injection')} attacks (${g('OWASP LLM01')}) — the #1 risk in the OWASP Top 10 for LLMs.</p><p>It detects direct injections, indirect injections embedded in documents and logs, and ${g('jailbreak')} attempts. Adversarial prompts are blocked before they ever reach the model.</p><p>Without prompt inspection, a single malicious input can manipulate an LLM into ignoring its instructions, leaking system prompts, or executing unauthorized actions — especially dangerous when AI has ${g('excessive agency')} over downstream systems.</p>`,
     seller:`Prompt injection is the #1 OWASP risk for LLMs. Every prompt that leaves your environment should be scanned for adversarial content before it reaches the model — including the indirect injections hiding inside documents, logs, and emails the AI is asked to summarize. This is the first line of defense.`
   },
-  { id:'n10', badge:'', icon:'🔒', label:'DLP',
+  { id:'n10', badge:'', icon:ICONS.lock, label:'DLP',
     x:530, y:140, act:4, color:C.green, accentRgb:ACT_RGB[3], isHidden:true,
     title:'DLP & Data Protection (LLM06)', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>The AI proxy inspects every prompt for sensitive data — ${g('PII')}, credentials, proprietary code, security telemetry — and redacts, masks, or blocks based on policy.</p><p>This directly addresses ${g('OWASP LLM06')}: Sensitive Information Disclosure. A developer's prompt gets scrubbed of API keys. A SOC analyst's query gets checked for customer PII.</p><p>${g('DLP')} policies enforced in real-time, per prompt. Think of it like email DLP — but for AI conversations.</p>`,
     seller:`Think of this as email DLP, but for every AI conversation: every prompt scanned for credentials, PII, and source code before it leaves your network. The DLP investments you've already made apply here — the proxy is where they get enforced for AI traffic, addressing OWASP LLM06 at the only point that catches every model and every provider.`
   },
-  { id:'n11', badge:'', icon:'🔍', label:'Output Safety',
+  { id:'n11', badge:'', icon:ICONS.eye, label:'Output Safety',
     x:530, y:310, act:4, color:C.green, accentRgb:ACT_RGB[3], isHidden:true,
     title:'Output Validation (LLM02)', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>The AI proxy validates every response before it reaches the user or downstream system. It checks for ${g('insecure output handling')} risks (${g('OWASP LLM02')}): hallucinated content, insecure code, embedded injections, toxic or policy-violating content.</p><p>For SOC automation, the proxy validates AI-recommended remediations are within approved boundaries before reaching ${g('SOAR')}. This constrains ${g('excessive agency')} (${g('OWASP LLM08')}).</p>`,
     seller:`If an AI suggests shutting down a production server, the proxy is what checks policy before that action executes. Output validation is the difference between AI-assisted security operations and AI-caused outages — and it's the layer that constrains excessive agency (OWASP LLM08) when AI gets the keys to downstream systems.`
   },
-  { id:'n11b', badge:'opt', icon:'⚡', label:'Rate Limiting',
+  { id:'n11b', badge:'opt', icon:ICONS.zap, label:'Rate Limiting',
     x:530, y:140, act:4, color:C.green, accentRgb:ACT_RGB[3], isHidden:true,
     title:'Rate Limiting & Cost Control (LLM04)', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>The AI proxy prevents ${g('excessive consumption')} (${g('OWASP LLM04')}) — token abuse, DDoS attacks against LLM endpoints, and runaway automation loops that burn through API budgets.</p><p>Per-user and per-team rate limits ensure fair usage. Output caching identifies redundant queries and serves cached responses, cutting token costs by up to 30%.</p><p>The result: you get AI productivity without a surprise six-figure API bill at the end of the quarter — and without a single team being able to monopolize shared model capacity.</p>`,
     seller:`A useful check: what's your monthly LLM API spend across all teams and tools? In most organizations, no single person can answer with confidence. Rate limiting plus output caching gives you cost control from day one, addressing OWASP LLM04 (excessive consumption) while protecting against runaway automation loops and token-level DDoS.`
   },
-  { id:'n11c', badge:'opt', icon:'🔀', label:'LLM Routing',
+  { id:'n11c', badge:'opt', icon:ICONS.shuffle, label:'LLM Routing',
     x:530, y:310, act:4, color:C.green, accentRgb:ACT_RGB[3], isHidden:true,
     title:'Intelligent LLM Routing', tagLabel:'THE CONTROL POINT', tagColor:C.green,
     body:`<p>Policy-based routing of AI requests to the right model based on data sensitivity, cost targets, and performance requirements. Sensitive code reviews go to private on-prem models. General questions go to cost-efficient public APIs. SOC tasks go to security-optimized models.</p><p>Think of it like an application-aware load balancer that reads the content and makes security-informed routing decisions. One policy engine governs which models are used, by whom, and for what.</p><p><strong>The proxy advantage.</strong> Open-source LLM routers like OpenRouter solve fan-out — but they're not security controls. CSP-bundled tools (Google Model Armor, AWS Bedrock Guardrails, Azure AI Content Safety) require a separate API call your app has to remember to make — bolt-on, not in-line. A true transparent proxy enforces routing and security on every request, with no SDK changes and no way to bypass. Same lesson as web app security: bump-in-the-wire scanners catch what's pointed at them; a transparent proxy catches everything.</p>`,
@@ -1086,14 +1143,18 @@ function goFlow(i){
     curAct = s.n;
     slide.classList.remove('show');
     main.style.display = '';
+    main.classList.add('flow-enter');
     render();
     main.scrollTop = 0;
+    requestAnimationFrame(() => requestAnimationFrame(() => main.classList.remove('flow-enter')));
   } else {
     main.style.display = 'none';
     slide.classList.add('show');
+    slide.classList.add('flow-enter');
     renderSlide(s.id);
     renderTimeline();
     slide.scrollTop = 0;
+    requestAnimationFrame(() => requestAnimationFrame(() => slide.classList.remove('flow-enter')));
   }
   const onAct3 = (s.type === 'act' && s.n === 3);
   document.getElementById('scanlineAmb').classList.toggle('on', onAct3);
