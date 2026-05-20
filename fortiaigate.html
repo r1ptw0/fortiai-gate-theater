@@ -499,6 +499,15 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
   50%{box-shadow:inset clamp(-3px,-0.3vw,-8px) 0 rgba(255,0,0,0.2),inset clamp(3px,0.3vw,8px) 0 rgba(0,255,255,0.2)}
   100%{box-shadow:none}
 }
+/* Cinematic "attacker in control" reveal — fades over the SOC sim after the breach crescendo */
+.attacker-reveal{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(60,8,8,0.88) 0%,rgba(2,4,8,0.96) 60%);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 2.4s ease;z-index:2;display:flex;align-items:center;justify-content:center;padding:40px}
+.attacker-reveal.show{opacity:1;pointer-events:auto}
+.ar-frame{text-align:center;max-width:720px;padding:42px 44px;border:1px solid rgba(218,41,28,0.55);border-radius:18px;background:rgba(28,5,5,0.65);box-shadow:0 0 80px rgba(218,41,28,0.32),inset 0 0 60px rgba(218,41,28,0.08)}
+.ar-label{font-family:ui-monospace,'SF Mono','Fira Code',monospace;font-size:12px;letter-spacing:3.5px;color:var(--ft-red);margin-bottom:20px;animation:blink 1.2s step-end infinite}
+.ar-title{font-size:clamp(28px,4.5vw,42px);font-weight:800;color:#ff7064;letter-spacing:-0.01em;line-height:1.12;margin-bottom:14px;text-shadow:0 0 24px rgba(218,41,28,0.55)}
+.ar-sub{font-size:14.5px;color:var(--text-secondary);line-height:1.55;margin-bottom:24px}
+.ar-close{background:var(--ft-red);color:#fff;border:none;padding:12px 30px;border-radius:24px;font-size:12px;font-weight:700;letter-spacing:1.5px;cursor:pointer;font-family:'Inter',sans-serif}
+.ar-close:hover{filter:brightness(1.12)}
 /* Attack-text streams — muted incident log fragments scrolling behind the SOC sim */
 .glitch-streams{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:0.42;z-index:0}
 .glitch-stream{position:absolute;font-family:ui-monospace,'SF Mono','Fira Code',monospace;font-weight:500;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;pointer-events:none;opacity:0}
@@ -563,6 +572,14 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
   <div class="glitch-streams" id="glitchStreams"></div>
   <button class="sim-close" id="socClose" onclick="closeSocSim()">&times;</button>
   <div class="sim-inner" id="socInner"></div>
+  <div class="attacker-reveal" id="attackerReveal">
+    <div class="ar-frame">
+      <div class="ar-label">SYSTEM COMPROMISED</div>
+      <div class="ar-title">ATTACKER IN CONTROL<br>OF THE SYSTEM</div>
+      <div class="ar-sub">Every tool that agent could call, the adversary now owns. Every dataset it could read is exfiltrated. Every action it could take, they can take. This is what happens when no control point inspects the prompts and validates the outputs.</div>
+      <button class="ar-close" onclick="closeSocSim()">CLOSE</button>
+    </div>
+  </div>
 </div>
 
 <div class="scanline-ambient" id="scanlineAmb"></div>
@@ -1219,22 +1236,65 @@ function clearGlitchStreams(){
   if (c) c.innerHTML = '';
 }
 
-/* Continuous ambient stream loop — runs while SOC attack sim is open, tier escalates with breach progress */
+/* SOC attack stream engine — phased crescendo then flurry + final "attacker in control" reveal */
 let socStreamLoop = null;
-let socAlertTier = 0;
+let socAlertTier = 0;       // tier surrogate kept for back-compat with warn/bad explicit spawns
+let socPhase = 0;            // 0:notices · 1:warnings · 2:alerts · 3:critical · 4:flurry (sustained)
+let socFlurryTimer = null;
+let socFadeTimer = null;
 function clearSocStreamLoop(){ if (socStreamLoop){ clearTimeout(socStreamLoop); socStreamLoop = null; } }
+function clearSocCinematicTimers(){
+  if (socFlurryTimer){ clearTimeout(socFlurryTimer); socFlurryTimer = null; }
+  if (socFadeTimer){ clearTimeout(socFadeTimer); socFadeTimer = null; }
+}
 function scheduleSocStream(){
   clearSocStreamLoop();
-  const delay = 2200 + Math.random() * 2400; // 2.2–4.6s between ambient spawns
+  // delay (ms range), tiers to pick from, simultaneous count
+  let delay, tiers, count;
+  switch(socPhase){
+    case 0: delay = 4000 + Math.random()*2000; tiers = [0];        count = 1; break; // notices, slow
+    case 1: delay = 2400 + Math.random()*1000; tiers = [0,1];      count = 1; break; // warnings
+    case 2: delay = 1400 + Math.random()*800;  tiers = [1,2];      count = 1; break; // alerts
+    case 3: delay = 700  + Math.random()*500;  tiers = [2,3];      count = 1; break; // critical
+    case 4: delay = 320  + Math.random()*260;  tiers = [1,2,3];    count = 2 + Math.floor(Math.random()*2); break; // flurry (sustained)
+    default: delay = 400 + Math.random()*200;  tiers = [2,3];      count = 2; break;
+  }
   socStreamLoop = setTimeout(() => {
     if (document.getElementById('socSim').classList.contains('show')){
-      spawnStream(socAlertTier);
+      for (let i = 0; i < count; i++) aT(() => spawnStream(tiers[Math.floor(Math.random()*tiers.length)]), i * 110);
       scheduleSocStream();
     }
   }, delay);
 }
-function startSocStreamLoop(){ socAlertTier = 0; scheduleSocStream(); }
-function stopSocStreamLoop(){ clearSocStreamLoop(); socAlertTier = 0; }
+function setSocPhase(phase){
+  socPhase = phase;
+  socAlertTier = Math.min(3, phase); // keep tier surrogate roughly aligned for explicit spawns
+  scheduleSocStream();
+}
+function startSocStreamLoop(){
+  socPhase = 0; socAlertTier = 0;
+  socStreamLoop = setTimeout(() => {
+    if (document.getElementById('socSim').classList.contains('show')){
+      spawnStream(0);
+      scheduleSocStream();
+    }
+  }, 1500); // first notice arrives quickly
+}
+function stopSocStreamLoop(){ clearSocStreamLoop(); clearSocCinematicTimers(); socPhase = 0; socAlertTier = 0; hideAttackerReveal(); }
+function startAttackCinematic(){
+  // Flurry escalation 2.5s after the bad reveal, then attacker-in-control reveal at +8s
+  clearSocCinematicTimers();
+  socFlurryTimer = setTimeout(() => { if (document.getElementById('socSim').classList.contains('show')) setSocPhase(4); }, 2500);
+  socFadeTimer = setTimeout(() => { if (document.getElementById('socSim').classList.contains('show')) showAttackerReveal(); }, 8000);
+}
+function showAttackerReveal(){
+  const el = document.getElementById('attackerReveal');
+  if (el) el.classList.add('show');
+}
+function hideAttackerReveal(){
+  const el = document.getElementById('attackerReveal');
+  if (el) el.classList.remove('show');
+}
 
 /* Escalating ambient pulse — fires while in Act 3 only, intensity ramps as user clicks hotspots */
 let act3Tension = 0;
@@ -1374,8 +1434,16 @@ function revealSeq(rootEl, idx, doneFn){
     const s = steps[idx];
     s.classList.add('show');
     s.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    if (s.classList.contains('bad')){ triggerGlitch('hard'); socAlertTier = 3; for (let k = 0; k < 3; k++) aT(() => spawnStream(3), k * 220); }
-    else if (s.classList.contains('warn')){ triggerGlitch('soft'); socAlertTier = Math.max(socAlertTier, 2); aT(() => spawnStream(2), 120); }
+    if (s.classList.contains('bad')){
+      triggerGlitch('hard');
+      setSocPhase(3);
+      for (let k = 0; k < 3; k++) aT(() => spawnStream(3), k * 220);
+      startAttackCinematic();
+    } else if (s.classList.contains('warn')){
+      triggerGlitch('soft');
+      setSocPhase(Math.min(2, socPhase + 1));
+      aT(() => spawnStream(socAlertTier), 120);
+    }
     aT(() => revealSeq(rootEl, idx + 1, doneFn), STEP_MS);
   } else {
     aT(doneFn, 300);
@@ -1501,8 +1569,8 @@ function socFinishNow(){
   clearAgencyTimers();
   const root = document.getElementById('socInner');
   root.querySelectorAll('.astep').forEach(e => e.classList.add('show'));
-  if (root.querySelector('.astep.bad')) socAlertTier = 3;
-  else if (root.querySelector('.astep.warn')) socAlertTier = Math.max(socAlertTier, 2);
+  if (root.querySelector('.astep.bad')){ setSocPhase(3); startAttackCinematic(); }
+  else if (root.querySelector('.astep.warn')) setSocPhase(Math.min(2, socPhase + 1));
   const a = root.querySelector('#socA'); if (a) a.classList.add('show');
   const sc = root.querySelector('#socScale'); if (sc) sc.classList.add('show');
   const sk = root.querySelector('#socSkip'); if (sk) sk.style.display = 'none';
