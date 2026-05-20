@@ -369,7 +369,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .owasp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
 .owasp-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.02)}
 .owasp-item.hot{border-color:rgba(60,177,126,0.45);background:rgba(60,177,126,0.06)}
-.owasp-code{font-size:10.5px;font-weight:800;color:var(--ft-silver);min-width:48px;letter-spacing:.4px;padding-top:1px}
+.owasp-code{font-size:10.5px;font-weight:800;color:var(--ft-grey);min-width:48px;letter-spacing:.4px;padding-top:1px}
 .owasp-item.hot .owasp-code{color:var(--ft-green)}
 .owasp-txt{font-size:11.5px;color:var(--text-secondary);line-height:1.45}
 .owasp-txt b{color:var(--text-primary);font-weight:700}
@@ -985,7 +985,7 @@ const visited = new Set();
 const FLOW = [
   { type:'slide', id:'agency', color:C.teal },
   { type:'act',   n:1,         color:ACT_COLORS[0] },
-  { type:'slide', id:'owasp',  color:C.silver },
+  { type:'slide', id:'owasp',  color:C.grey },
   { type:'act',   n:2,         color:ACT_COLORS[1] },
   { type:'act',   n:3,         color:ACT_COLORS[2] },
   { type:'act',   n:4,         color:ACT_COLORS[3] },
@@ -1086,8 +1086,8 @@ const SLIDES = {
     </div>
     <div id="agencyStage" style="display:none"></div>
   `},
-  owasp: { accent:C.silver, html:`
-    <div class="slide-eyebrow" style="color:${C.silver}">OPEN WORLDWIDE APPLICATION SECURITY PROJECT</div>
+  owasp: { accent:C.grey, html:`
+    <div class="slide-eyebrow" style="color:${C.grey}">OPEN WORLDWIDE APPLICATION SECURITY PROJECT</div>
     <div class="slide-title">OWASP Top 10 for LLMs</div>
     <div class="slide-sub">Before we walk through the risks, the framework we'll measure them against — the shared language security teams, vendors, and auditors have standardized on.</div>
     <div class="owasp-why">
