@@ -479,15 +479,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .scanline-ambient{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;pointer-events:none;z-index:80;display:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(218,41,28,0.05) 2px,rgba(218,41,28,0.05) 3px);animation:scanline-amb 7s linear infinite;opacity:.55}
 .scanline-ambient.on{display:block}
 @keyframes scanline-amb{from{background-position:0 0}to{background-position:0 200%}}
-/* ── SPEAKER NOTES ── */
-.speaker-notes{position:fixed;left:0;right:0;bottom:0;max-height:44vh;overflow-y:auto;background:rgba(8,10,18,0.97);backdrop-filter:blur(16px);border-top:2px solid var(--ft-purple);padding:15px 30px 20px;transform:translateY(101%);transition:transform .3s ease;z-index:95;font-size:14px;line-height:1.75;color:#ded7ee}
-.speaker-notes.show{transform:translateY(0)}
-.sn-label{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--ft-purple);margin-bottom:8px}
-.sn-body p{margin-bottom:9px}
-.sn-body p:last-child{margin-bottom:0}
-.sn-toggle{position:fixed;right:18px;bottom:16px;width:42px;height:42px;border-radius:50%;background:rgba(144,99,205,0.18);border:1px solid rgba(144,99,205,0.5);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;z-index:96;transition:all .2s}
-.sn-toggle:hover{background:rgba(144,99,205,0.32)}
-.sn-toggle.active{background:var(--ft-purple);border-color:var(--ft-purple)}
 </style>
 </head>
 <body>
@@ -517,12 +508,6 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
   <div class="slide-inner" id="slideInner"></div>
   <div class="bottom-area" id="slideBottom"></div>
 </div>
-
-<div class="speaker-notes" id="speakerNotes">
-  <div class="sn-label">🎤 SPEAKER NOTES — TALK TRACK</div>
-  <div class="sn-body" id="snBody"></div>
-</div>
-<div class="sn-toggle" id="snToggle" title="Toggle speaker notes (N)">🎤</div>
 
 <div class="info-panel" id="infoPanel">
   <div class="panel-close" id="panelClose">&times;</div>
@@ -899,7 +884,7 @@ const BADGES = [
 ];
 
 /* ═══ STATE ═══ */
-let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, notesOpen = false, sprawlActive = false;
+let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, sprawlActive = false;
 const SPRAWL_MODELS = [
   { x:530, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
   { x:650, y:100, icon:ICONS.cpu, label:'Anthropic Claude' },
@@ -955,7 +940,6 @@ function goFlow(i){
   } else {
     stopAct3Pulse();
   }
-  renderNotes();
 }
 
 /* ═══ BREACH GLITCH FX (gaslight-inspired) ═══ */
@@ -1575,34 +1559,6 @@ function runCodeSim(){
   aT(() => typeComment(0), 600);
 }
 
-/* ═══ SPEAKER NOTES (talk track) ═══ */
-const NOTES = {
-  title:`<p>Hi everyone, my name is Alex, and I lead the Cloud Practice here at Fortinet Canada. As part of our responsibilities, we've also brought FortiAIGate under our umbrella.</p><p>Today, I want to spend some time talking about AI — specifically how organizations are operationalizing AI agents, and what that means from a security perspective. In 2026, the applications for AI agents are effectively limitless.</p><p>The reality is: we've spent years — and billions of dollars — securing enterprise data, applications, and infrastructure. And now, in many cases, we're exposing that same data to large language models and autonomous agents. That's really the conversation we want to have today.</p>`,
-  agency:`<p>Before we get into that, it's important to distinguish between generative AI and agentic AI. Generative AI is fundamentally built around inference. You provide a prompt, the model processes that input against its training data and retrieved context, and it generates a predicted response. It's request-and-response driven.</p><p>Agentic AI changes that model entirely. We're introducing orchestration layers around the LLM — system prompts, memory, tool access, APIs, and workflow controls. The LLM is no longer just generating text. It's determining when to use tools, when to retrieve data, when to validate results, and when to take the next action toward an objective. Instead of a single inference cycle, the agent operates through iterative reasoning loops.</p><p>And that introduces a completely new security paradigm. These agents increasingly operate as identities inside enterprise environments. They authenticate into systems. They inherit permissions. They access sensitive datasets — and the scope of what they can reach keeps expanding. That's why organizations are moving beyond standalone consumer tools like ChatGPT: a public LLM can't enforce your corporate policies, can't analyze your SIEM telemetry, and doesn't understand your internal controls, governance models, or operational context.</p>`,
-  act1:`<p>So let's look at where AI already lives in your environment today — the new stack. This isn't hypothetical or future-state. Your SIEM is using LLM capabilities. Your developers are using coding assistants. Your SOC analysts are querying in natural language. <em>[Walk the hotspots.]</em></p><p>The point: every one of these is already sending data to an AI model, and increasingly these aren't just answering — they're beginning to act.</p>`,
-  owasp:`<p>Before we walk through what goes wrong, I want to ground us in a common framework — the OWASP Top 10 for LLMs. OWASP — the Open Worldwide Application Security Project — is the same community behind the web application security standards most of your teams already know. They built this list because traditional AppSec frameworks never accounted for prompts, model outputs, or autonomous tool use.</p><p><em>[Explain your benchmarking approach here — how you use this list to score and compare AI risk.]</em> As we move through the next four acts, we'll keep mapping what we see back to these categories.</p>`,
-  act2:`<p>Here's the blind spot. For most organizations, everything we just discussed is happening with no visibility, no policy enforcement, and no audit trail. <em>[Ask: could you show, on demand, what data your developers send to assistants, or which models your SOC queries?]</em></p><p>That gap — LLM06 going out in prompts, LLM02 coming back in responses — is what makes this a governance problem, not just a tooling one.</p>`,
-  act3:`<p>This is where it stops being theoretical. <em>[Walk the two scenarios.]</em> Sensitive data exfiltration at scale — and AI automation gone wrong, where a prompt injection steers an agent that has real permissions into a destructive action. That's LLM01 meeting LLM08: the agent identity problem we set up at the start, now with consequences.</p>`,
-  act4:`<p>So how do we secure that interaction layer? The answer is a control point — an AI proxy that sits between every user and agent and the models and tools they call. <em>[Walk the capabilities.]</em></p><p>This is the bridge back to where we started: a public LLM can't enforce your policy, see your SIEM, or understand your operational context. A governed control point can — for every model, every provider, every agent, regardless of what your teams adopt next.</p>`,
-  closing:`<p>That's really the conversation we want to have. We've spent years and billions securing our data — the question now is how we extend that same discipline to the way agents reason, retrieve, and act. How do we ensure the tool calls are trusted? How do we validate the data being retrieved? How do we protect against prompt injection, poisoned sources, and excessive permissions — the risks captured in the OWASP Top 10 for LLMs?</p>`
-};
-
-function notesKey(){
-  if (!document.getElementById('introOverlay').classList.contains('hidden')) return 'title';
-  if (document.getElementById('summaryOverlay').classList.contains('visible')) return 'closing';
-  const s = FLOW[flowIdx];
-  return s.type==='act' ? 'act'+s.n : s.id;
-}
-function renderNotes(){
-  document.getElementById('snBody').innerHTML = NOTES[notesKey()] || '<p><em>No notes for this screen.</em></p>';
-}
-function toggleNotes(force){
-  notesOpen = (force===undefined) ? !notesOpen : force;
-  document.getElementById('speakerNotes').classList.toggle('show', notesOpen);
-  document.getElementById('snToggle').classList.toggle('active', notesOpen);
-  if (notesOpen) renderNotes();
-}
-
 function renderHeader() {
   const a = ACTS[curAct-1];
   document.getElementById('actHeader').innerHTML = `
@@ -1844,19 +1800,16 @@ function goIntro(){
   document.getElementById('scanlineAmb').classList.remove('on');
   document.getElementById('introOverlay').classList.remove('hidden');
   flowIdx = 0;
-  renderNotes();
 }
 
 /* ── SUMMARY (closing) ── */
 function showSummary() {
   document.getElementById('summaryOverlay').classList.add('visible');
-  renderNotes();
 }
 document.getElementById('summaryRestart').onclick = goIntro;
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', e => {
-  if (e.key === 'n' || e.key === 'N') { toggleNotes(); return; }
   const socUp = document.getElementById('socSim').classList.contains('show');
   if (socUp) { if (e.key === 'Escape') closeSocSim(); return; }
   const introUp = !document.getElementById('introOverlay').classList.contains('hidden');
@@ -1870,9 +1823,8 @@ document.addEventListener('keydown', e => {
     if (summaryUp) { document.getElementById('summaryOverlay').classList.remove('visible'); goFlow(FLOW.length - 1); }
     else goFlow(flowIdx - 1);
   }
-  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); renderNotes(); }
+  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); }
 });
-document.getElementById('snToggle').onclick = () => toggleNotes();
 
 function fitStage(){
   const wrap = document.getElementById('diagramWrap');
@@ -1940,7 +1892,6 @@ window.addEventListener('resize', () => { fitStage(); updateConns(); });
 })();
 
 renderTimeline();
-renderNotes();
 fitStage();
 </script>
 </body>
