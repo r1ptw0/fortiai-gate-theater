@@ -78,7 +78,7 @@ body{
 .timeline-line.completed{background:rgba(162,178,200,0.35)}
 
 /* ── MAIN ── */
-.main{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;transition:padding-right .35s;opacity:1;transform:translateY(0);transition:opacity var(--t-page),transform var(--t-page),padding-right .35s var(--ease-out-soft)}
+.main{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;opacity:1;transform:translateY(0);transition:opacity var(--t-page),transform var(--t-page),padding-right .35s var(--ease-out-soft)}
 .main.flow-enter{opacity:0;transform:translateY(8px)}
 .main.panel-open{padding-right:var(--panel-width)}
 
@@ -91,7 +91,7 @@ body{
 .seller-tip::before{content:'KEY INSIGHT';display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ft-purple);margin-bottom:4px}
 
 /* ── DIAGRAM ── */
-.diagram-wrap{position:relative;width:100%;margin:20px 0 0;padding:0 16px;display:flex;justify-content:center;align-items:flex-start;overflow:hidden}
+.diagram-wrap{position:relative;width:100%;margin:18px 0 0;padding:0 16px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex:1;min-height:0}
 .diagram-stage{position:relative;width:960px;height:540px;flex-shrink:0;transform-origin:top center;transform:scale(var(--diagram-scale,1));transition:transform .25s var(--ease-out-soft)}
 .diagram{position:relative;width:100%;height:100%;min-height:0}
 svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
@@ -611,13 +611,14 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 import psycopg2
 
 DB_PASSWORD = "pr0d-b1ll1ng-9f3a2c"
+API_KEY     = "sk-live-7Y2x9fK3e4Q"
 
 def connect():
     return psycopg2.connect(
         host="db-prod",
         password=DB_PASSWORD)</pre>
         <button class="tryit-copy" data-target="tryPayload1" onclick="copyPayload(this)">Copy</button>
-        <div class="tryit-catch"><b>What FortiAIGate catches:</b> a hardcoded production credential in the prompt — redacted by DLP before it ever reaches the model.</div>
+        <div class="tryit-catch"><b>What FortiAIGate catches:</b> a hardcoded production password and a live API key in the prompt — both redacted by DLP before they reach the model.</div>
       </div>
       <div class="tryit-card">
         <div class="tryit-card-head"><span class="tryit-card-title">SOC automation · prompt injection</span><span class="tryit-card-code">LLM01</span></div>
@@ -1933,12 +1934,13 @@ document.addEventListener('keydown', e => {
 
 function fitStage(){
   const wrap = document.getElementById('diagramWrap');
-  if (!wrap) return;
-  // Available width inside the wrap (accounting for the 16px horizontal padding × 2)
+  if (!wrap || wrap.clientHeight < 60) return; // skip while .main is hidden (on a slide)
+  // Scale the 960×540 stage to fit both the available width and height of the wrap
   const availW = wrap.clientWidth - 32;
-  const scale = Math.min(1, Math.max(0.45, availW / 960));
+  const availH = wrap.clientHeight - 16;
+  let scale = Math.min(availW / 960, availH / 540);
+  scale = Math.min(1, Math.max(0.4, scale));
   document.documentElement.style.setProperty('--diagram-scale', scale.toFixed(4));
-  wrap.style.height = Math.round(540 * scale + 8) + 'px';
 }
 window.addEventListener('resize', () => { fitStage(); updateConns(); });
 
