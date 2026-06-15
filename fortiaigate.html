@@ -393,6 +393,20 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .owasp-txt{font-size:11.5px;color:var(--text-secondary);line-height:1.45}
 .owasp-txt b{color:var(--text-primary);font-weight:700}
 .owasp-foot{font-size:11px;color:var(--text-dim);text-align:center;margin-top:4px}
+/* ── PRODUCT SLIDES (FortiAIGate feature overview) ── */
+.slide-inner:has(.fg-wrap){max-width:1500px} /* product slides use more width for the screenshots */
+.fg-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:34px;align-items:start;margin-top:20px}
+.fg-lead{font-size:15px;font-weight:800;color:var(--ft-red);letter-spacing:.2px;line-height:1.4;margin-bottom:16px}
+.fg-feat{margin-bottom:13px}
+.fg-feat h4{font-size:13px;font-weight:700;color:var(--ft-yellow);letter-spacing:.3px;margin-bottom:3px}
+.fg-feat p{font-size:12.5px;color:var(--text-secondary);line-height:1.55}
+.fg-list{list-style:none;margin-top:4px}
+.fg-list li{font-size:12px;color:var(--text-secondary);line-height:1.5;padding-left:15px;position:relative;margin-bottom:2px}
+.fg-list li::before{content:'•';position:absolute;left:3px;color:var(--ft-teal)}
+.fg-cats{columns:2;column-gap:18px;margin-top:5px}
+.fg-cats li{break-inside:avoid}
+.fg-shot{border:1px solid var(--border-strong);border-radius:14px;overflow:hidden;background:var(--surface-card-bg);box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;max-height:600px}
+.fg-shot img{max-width:100%;max-height:600px;height:auto;object-fit:contain;display:block}
 /* ── ACT 0 SIMULATION ── */
 .cmp-col.demo-pick{cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
 .cmp-col.demo-pick:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.35)}
@@ -1061,6 +1075,11 @@ const FLOW = [
   { type:'act',   n:2,         color:ACT_COLORS[1] },
   { type:'act',   n:3,         color:ACT_COLORS[2] },
   { type:'act',   n:4,         color:ACT_COLORS[3] },
+  { type:'slide', id:'fgGateway', color:C.red },
+  { type:'slide', id:'fgRouting', color:C.red },
+  { type:'slide', id:'fgMcp',     color:C.red },
+  { type:'slide', id:'fgLogs',    color:C.red },
+  { type:'slide', id:'fgMcpLogs', color:C.red },
 ];
 
 function actFlowIdx(n){ return FLOW.findIndex(s => s.type==='act' && s.n===n); }
@@ -1493,6 +1512,102 @@ const SLIDES = {
       <div class="owasp-item"><span class="owasp-code">LLM10</span><span class="owasp-txt"><b>Model Theft</b> — unauthorized extraction of proprietary models.</span></div>
     </div>
     <div class="owasp-foot">Maintained by OWASP — the catalogue we'll map each risk back to as we move through the talk.</div>
+  `},
+
+  /* ═══ PRODUCT SLIDES — FortiAIGate feature overview (closing) ═══ */
+  fgGateway: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">SECURE AI GATEWAY</div>
+    <div class="slide-title">FortiAIGate <span class="gr">LLM Gateway</span></div>
+    <div class="fg-wrap">
+      <div>
+        <div class="fg-lead">Detect &amp; block threats across the OWASP Top 10 for LLM, MCP, and agentic apps</div>
+        <div class="fg-feat"><h4>LLM Routing</h4><p>Secure LLM reverse proxy, routing, and application-delivery optimization.</p></div>
+        <div class="fg-feat"><h4>Filter &amp; Sanitize LLM Inputs / Outputs</h4><p>Block prompt-injection and jailbreak attempts; sanitize model outputs for harmful content.</p></div>
+        <div class="fg-feat"><h4>MCP Tool Scanning</h4><p>Scan MCP tool lists and responses in both directions:</p>
+          <ul class="fg-list"><li>MCP Server → AI Agent / Client → LLM</li><li>LLM → AI Agent / Client</li></ul></div>
+        <div class="fg-feat"><h4>Prevent LLM Data Leakage</h4><p>Detect and classify sensitive data and PII to stop leaks in both directions.</p></div>
+        <div class="fg-feat"><h4>Cost Tracking</h4><p>Track spend to prevent excessive use of expensive LLM resources.</p></div>
+        <div class="fg-feat"><h4>GPU-Accelerated</h4><p>Multi-GPU security guardrails for high throughput and low latency.</p></div>
+      </div>
+      <div class="fg-shot"><img src="assets/image102.png" alt="FortiAIGate LLM Gateway dashboard"></div>
+    </div>
+  `},
+
+  fgRouting: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">DYNAMIC CONNECTIVITY</div>
+    <div class="slide-title">Intelligent <span class="gr">Routing</span></div>
+    <div class="fg-wrap">
+      <div>
+        <div class="fg-lead">Dynamic AI provider &amp; model connectivity</div>
+        <div class="fg-feat"><h4>Intelligent Routing</h4><p>Dynamically route inbound requests from agentic AI apps based on their content.</p></div>
+        <div class="fg-feat"><h4>Language-Based Routing</h4><p>Detect the human language inside a prompt and route it to the matching backend LLM.</p></div>
+        <div class="fg-feat"><h4>Code-Based Routing</h4><p>Detect the coding language inside a prompt and route it to the matching backend LLM.</p></div>
+        <div class="fg-feat"><h4>Model-Based Routing</h4><p>Detect the model name inside a request and route it to the matching backend LLM.</p></div>
+        <div class="fg-feat"><h4>Default Routing</h4><p>The fallback backend LLM destination when no rules match.</p></div>
+      </div>
+      <div class="fg-shot"><img src="assets/image106.png" alt="FortiAIGate intelligent routing configuration"></div>
+    </div>
+  `},
+
+  fgMcp: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">MCP SECURITY</div>
+    <div class="slide-title">MCP Tool Scanning — <span class="gr">Prompt Injection</span></div>
+    <div class="fg-wrap">
+      <div>
+        <div class="fg-lead">Detect and prevent malicious MCP tools</div>
+        <div class="fg-feat"><h4>MCP Tool Scanning</h4><p>Scan MCP tool lists and responses for prompt injection on the inbound path:</p>
+          <ul class="fg-list"><li>MCP Server → AI Agent / Client → LLM</li></ul></div>
+        <div class="fg-feat"><h4>Scan Types</h4><p>Protect against indirect prompt injection from the MCP tool list and tool responses.</p></div>
+        <div class="fg-feat"><h4>Actions</h4><p>Alert · Alert &amp; Deny.</p></div>
+        <div class="fg-feat"><h4>Guards Against OWASP Top 10 Categories</h4>
+          <ul class="fg-list fg-cats">
+            <li>LLM01:2025 Prompt Injection</li>
+            <li>LLM02:2025 Sensitive Information Disclosure</li>
+            <li>LLM04:2025 Data &amp; Model Poisoning</li>
+            <li>LLM05:2025 Improper Output Handling</li>
+            <li>LLM06:2025 Excessive Agency</li>
+            <li>LLM07:2025 System Prompt Leakage</li>
+            <li>LLM10:2025 Unbounded Consumption</li>
+            <li>MCP01:2025 Token Mismanagement &amp; Secret Exposure</li>
+            <li>MCP02:2025 Privilege Escalation via Scope Creep</li>
+            <li>MCP03:2025 Tool Poisoning</li>
+            <li>MCP05:2025 Command Injection &amp; Execution</li>
+            <li>MCP06:2025 Prompt Injection via Contextual Payloads</li>
+            <li>MCP10:2025 Context Injection &amp; Over-Sharing</li>
+          </ul></div>
+      </div>
+      <div class="fg-shot"><img src="assets/image118.png" alt="FortiAIGate MCP tool scanning log"></div>
+    </div>
+  `},
+
+  fgLogs: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">OBSERVABILITY</div>
+    <div class="slide-title">Log <span class="gr">Details</span></div>
+    <div class="fg-wrap">
+      <div>
+        <div class="fg-lead">Visibility and compliance for responsible AI</div>
+        <div class="fg-feat"><h4>Understand Model Behavior</h4><p>Let teams monitor LLM performance and MCP tools, identify potential biases, and understand how the model generates outputs.</p></div>
+        <div class="fg-feat"><h4>Maintain Accuracy &amp; Reliability</h4><p>Continuous monitoring and analysis of LLM / MCP inputs and outputs to keep results accurate and reliable, aligned with responsible-AI usage.</p></div>
+        <div class="fg-feat"><h4>Detect Anomalous Activities</h4><p>Identify unusual usage patterns, including insider threats or attempts to exfiltrate sensitive, proprietary, or confidential data.</p></div>
+        <div class="fg-feat"><h4>Track LLM Usage &amp; Control Costs</h4><p>Monitor and track LLM usage against predefined budgets for sustainable AI deployment.</p></div>
+      </div>
+      <div class="fg-shot"><img src="assets/image126.png" alt="FortiAIGate log details view"></div>
+    </div>
+  `},
+
+  fgMcpLogs: { accent:C.red, html:`
+    <div class="slide-eyebrow" style="color:${C.red}">OBSERVABILITY</div>
+    <div class="slide-title">MCP Tool Call &amp; <span class="gr">Response Logs</span></div>
+    <div class="fg-wrap">
+      <div>
+        <div class="fg-lead">Visibility and compliance for responsible AI</div>
+        <div class="fg-feat"><h4>Understand Model Behavior</h4><p>Let teams monitor LLM performance and MCP tools, identify potential biases, and understand how the model generates outputs.</p></div>
+        <div class="fg-feat"><h4>Maintain Accuracy &amp; Reliability</h4><p>Continuous monitoring and analysis of LLM / MCP inputs and outputs to keep results accurate and reliable, aligned with responsible-AI usage.</p></div>
+        <div class="fg-feat"><h4>Detect Anomalous Activities</h4><p>Identify unusual usage patterns, including insider threats or attempts to exfiltrate sensitive, proprietary, or confidential data.</p></div>
+        <div class="fg-feat"><h4>Track LLM Usage &amp; Control Costs</h4><p>Monitor and track LLM usage against predefined budgets for sustainable AI deployment.</p></div>
+      </div>
+      <div class="fg-shot"><img src="assets/image130.png" alt="FortiAIGate MCP tool call and response logs"></div>
+    </div>
   `}
 };
 
