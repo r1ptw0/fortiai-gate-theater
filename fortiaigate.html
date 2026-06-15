@@ -98,7 +98,10 @@ html.projector-mode .connector{stroke-width:3;opacity:.85!important}
 html,body{height:100%;overflow:hidden}
 body{
   font-family:'Inter',system-ui,-apple-system,sans-serif;
-  background:#000;
+  /* Fills the whole viewport so the letterbox/pillarbox bars share the deck's
+     background and flip with dark/light mode — bars blend seamlessly. */
+  background:var(--bg-dark);
+  background-image:var(--bg-grad);
   color:var(--text-primary);line-height:1.6;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
@@ -111,8 +114,9 @@ body{
   width:1920px;height:1080px;
   transform:translate(-50%,-50%) scale(var(--deck-scale,1));
   transform-origin:center center;
-  background:var(--bg-dark);
-  background-image:var(--bg-grad);
+  /* Transparent — the body's background shows through here and across the bars,
+     making the letterbox/pillarbox edges blend seamlessly with the deck. */
+  background:transparent;
   overflow:hidden;
 }
 
