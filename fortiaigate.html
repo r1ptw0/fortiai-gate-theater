@@ -50,6 +50,50 @@
   --shadow-card: 0 18px 60px rgba(0,0,0,0.14), 0 1px 0 rgba(0,0,0,0.04) inset;
   --shadow-lift: 0 8px 24px rgba(0,0,0,0.10);
 }
+/* ── PROJECTOR / HIGH-CONTRAST MODE ──
+   Boosts text brightness, borders, surfaces and diagram lines so the deck stays
+   legible on a washed-out, low-contrast projector or cinema screen. Toggle with
+   the ◐ control (bottom-right) or the "P" key. Most elements read these tokens,
+   so overriding them reaches the whole deck; faint hard-coded values are lifted below. */
+html.projector-mode{
+  --text-secondary:#cfcfd4;
+  --text-dim:#a2a2a8;
+  --border-subtle:rgba(255,255,255,0.20);
+  --border-default:rgba(255,255,255,0.32);
+  --border-strong:rgba(255,255,255,0.48);
+  --surface-1:rgba(255,255,255,0.08);
+  --surface-2:rgba(255,255,255,0.13);
+  --surface-glass-bg:rgba(20,22,30,0.93);
+  --surface-glass-border:rgba(255,255,255,0.28);
+  --surface-card-bg:rgba(18,20,28,0.96);
+}
+html.projector-mode.light-mode{
+  --text-secondary:#34343a;
+  --text-dim:#56565e;
+  --border-subtle:rgba(0,0,0,0.20);
+  --border-default:rgba(0,0,0,0.34);
+  --border-strong:rgba(0,0,0,0.50);
+  --surface-1:rgba(0,0,0,0.07);
+  --surface-2:rgba(0,0,0,0.12);
+  --surface-glass-bg:rgba(255,255,255,0.96);
+  --surface-glass-border:rgba(0,0,0,0.24);
+  --surface-card-bg:rgba(255,255,255,0.98);
+}
+/* Faint hard-coded values that don't read from tokens */
+html.projector-mode .zone-sub{color:rgba(190,205,225,0.85)}
+html.projector-mode .zone-divider{background:rgba(255,255,255,0.20)}
+html.projector-mode.light-mode .zone-divider{background:rgba(0,0,0,0.20)}
+html.projector-mode .timeline-line{background:rgba(255,255,255,0.32)}
+html.projector-mode.light-mode .timeline-line{background:rgba(0,0,0,0.32)}
+html.projector-mode .nav-btn.prev{background:rgba(255,255,255,0.13);border-color:rgba(255,255,255,0.24)}
+html.projector-mode.light-mode .nav-btn.prev{background:rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.22)}
+html.projector-mode .cmp-li,
+html.projector-mode .owasp-item,
+html.projector-mode .owasp-why-card,
+html.projector-mode .cmp-col{border-color:var(--border-strong)}
+html.projector-mode .narration{font-style:normal}
+html.projector-mode .node-label{font-weight:700}
+html.projector-mode .connector{stroke-width:3;opacity:.85!important}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{
@@ -242,8 +286,11 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .main::-webkit-scrollbar-thumb,.info-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
 
 /* ── THEME TOGGLE ── */
-.theme-toggle{position:fixed;bottom:20px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;z-index:560;line-height:1}
-.theme-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
+.theme-toggle,.proj-toggle{position:fixed;bottom:20px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;z-index:560;line-height:1}
+.theme-toggle:hover,.proj-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
+.proj-toggle{right:68px;font-size:17px}
+.proj-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
+.proj-toggle.on:hover{background:var(--ft-blue);border-color:var(--ft-blue)}
 
 /* ── LIGHT MODE ── */
 .light-mode{--text-primary:#1d1d1f;--text-secondary:#6e6e73;--text-dim:#aeaeb2;--ft-grey:#aeaeb2}
@@ -300,8 +347,9 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 .light-mode .main::-webkit-scrollbar-thumb,.light-mode .info-panel::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1)}
 
-.light-mode .theme-toggle{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.8)}
-.light-mode .theme-toggle:hover{border-color:rgba(0,0,0,0.25);background:rgba(255,255,255,0.95)}
+.light-mode .theme-toggle,.light-mode .proj-toggle{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.8)}
+.light-mode .theme-toggle:hover,.light-mode .proj-toggle:hover{border-color:rgba(0,0,0,0.25);background:rgba(255,255,255,0.95)}
+.light-mode .proj-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
 
 .light-mode .node-proxy-box .node-icon{background:rgba(60,177,126,0.08);border-color:rgba(60,177,126,0.4)}
 .light-mode .proxy-box-item{background:rgba(60,177,126,0.06);border-color:rgba(60,177,126,0.2)}
@@ -659,6 +707,7 @@ def connect():
 
 <div id="floatTip"></div>
 
+<div class="proj-toggle" id="projectorToggle" onclick="toggleProjector()" title="Projector mode — boost contrast for projector / cinema (P)">◐</div>
 <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</div>
 
 <script>
@@ -667,6 +716,25 @@ function toggleTheme() {
   const icon = isLight ? '🌙' : '☀️';
   document.querySelectorAll('.theme-toggle').forEach(el => el.textContent = icon);
 }
+
+// Projector / high-contrast mode — boosts legibility on washed-out projectors
+// and cinema screens. Persisted so it survives a reload mid-presentation.
+function toggleProjector() {
+  const on = document.documentElement.classList.toggle('projector-mode');
+  try { localStorage.setItem('fag-projector', on ? '1' : '0'); } catch (e) {}
+  const btn = document.getElementById('projectorToggle');
+  if (btn) btn.classList.toggle('on', on);
+  fitStage(); updateConns(); // contrast tweaks change stroke width → redraw lines
+}
+(function restoreProjector() {
+  try {
+    if (localStorage.getItem('fag-projector') === '1') {
+      document.documentElement.classList.add('projector-mode');
+      const btn = document.getElementById('projectorToggle');
+      if (btn) btn.classList.add('on');
+    }
+  } catch (e) {}
+})();
 
 const C = {
   blue:'#307FE2', yellow:'#FFB900', red:'#DA291C', green:'#3CB17E',
@@ -1928,6 +1996,8 @@ function copyPayload(btn){
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', e => {
+  const typing = e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
+  if (!typing && (e.key === 'p' || e.key === 'P')) { toggleProjector(); return; }
   const socUp = document.getElementById('socSim').classList.contains('show');
   if (socUp) { if (e.key === 'Escape') closeSocSim(); return; }
   const tryUp = document.getElementById('tryItOverlay').classList.contains('show');
