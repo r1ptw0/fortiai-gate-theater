@@ -1071,6 +1071,7 @@ function goFlow(i){
   flowIdx = i;
   subStepIdx = 0;
   clearAgencyTimers();
+  closeSocSim(); // dismiss any open full-screen example when changing stops
   closePanel();
   const s = FLOW[i];
   const main = document.getElementById('main');
@@ -1122,7 +1123,7 @@ const ACT_STEPS = {
     { panel:'n3' }    // point 5 — LLM / AI Model
   ],
   2: [ {panel:'n5'}, {panel:'n6'}, {panel:'n6b'}, {panel:'n6c'} ], // 6,7, No Audit Trail, Model Sprawl
-  3: [ {panel:'n7'}, {panel:'n8'} ]                                // points 8,9
+  3: [ {panel:'n7'}, {panel:'n8'}, {sim:'attack'} ]                // points 8,9 + "automation gone wrong" example
 };
 
 /* Last sub-step index for a given flow stop (0 = no sub-steps).
@@ -1154,6 +1155,8 @@ function applyStop(){
       if (node) openPanel(node); // open this point's panel, exactly as a click on the node would
     } else if (step.sim === 'soc'){
       runSocSim('promise'); // SOC automation example (auto-plays)
+    } else if (step.sim === 'attack'){
+      runSocSim('attack');  // "SOC automation gone wrong" example (auto-plays)
     } else if (step.sim === 'code'){
       runCodeSim();         // live code-completion example (auto-plays)
     }
