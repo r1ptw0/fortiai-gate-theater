@@ -1041,6 +1041,9 @@ const BADGES = [
 
 /* ═══ STATE ═══ */
 let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, sprawlActive = false;
+/* Clicker sub-step position within the current flow stop (0 = the stop's base state).
+   Agency slide steps through its demos; acts reveal points one at a time. See ACT_REVEAL / clickerNext. */
+let subStepIdx = 0;
 const SPRAWL_MODELS = [
   { x:530, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
   { x:650, y:100, icon:ICONS.cpu, label:'Anthropic Claude' },
@@ -1066,6 +1069,7 @@ function goFlow(i){
   if (i < 0) return;
   if (i >= FLOW.length){ showSummary(); return; }
   flowIdx = i;
+  subStepIdx = 0;
   clearAgencyTimers();
   closePanel();
   const s = FLOW[i];
@@ -1097,6 +1101,83 @@ function goFlow(i){
     stopAct3Pulse();
   }
 }
+
+/* ═══ CLICKER NAVIGATION ═══
+   Drives the talk with a presentation remote / keyboard. Each flow stop can have
+   sub-steps: the agency slide steps through its gen/agent demos, and each act
+   reveals its points (badge-numbered nodes) one click at a time. */
+const ACT_REVEAL = {
+  1: [['n1'], ['n2'], ['n2b'], ['n4','n4b','n4c'], ['n3']], // points 1,2,3,4,5 (optional team assistants ride with pt4)
+  2: [['n5'], ['n6'], ['n6b'], ['n6c']],                     // points 6,7, No Audit Trail, Model Sprawl
+  3: [['n7'], ['n8']]                                         // points 8,9
+};
+
+/* Is node n visible at the current act + sub-step? Earlier acts stay fully shown. */
+function nodeRevealed(n){
+  if (n.act < curAct) return true;
+  if (n.act > curAct) return false;
+  const groups = ACT_REVEAL[curAct];
+  if (!groups) return true; // acts without progressive reveal (e.g. Act 4)
+  for (let gi = 0; gi < groups.length; gi++){
+    if (groups[gi].includes(n.id)) return gi <= subStepIdx;
+  }
+  return true; // current-act node not in the reveal list → always show
+}
+
+/* Last sub-step index for a given flow stop (0 = no sub-steps). */
+function maxSubStep(i){
+  const s = FLOW[i];
+  if (!s) return 0;
+  if (s.type === 'slide' && s.id === 'agency') return 4; // compare, gen, back, agent, back
+  if (s.type === 'act' && ACT_REVEAL[s.n]) return ACT_REVEAL[s.n].length - 1;
+  return 0;
+}
+
+/* Apply the current stop's visual state for the current subStepIdx. */
+function applyStop(){
+  const s = FLOW[flowIdx];
+  if (!s) return;
+  if (s.type === 'slide' && s.id === 'agency'){
+    if (subStepIdx === 1) agencyDemo('gen');
+    else if (subStepIdx === 3) agencyDemo('agent');
+    else agencyBack(); // 0, 2, 4 → comparison
+  } else if (s.type === 'act'){
+    const groups = ACT_REVEAL[s.n];
+    if (groups){
+      groups.forEach((grp, gi) => grp.forEach(id => {
+        const el = document.getElementById('node-' + id);
+        if (!el) return;
+        const show = gi <= subStepIdx;
+        el.classList.toggle('visible-el', show);
+        el.classList.toggle('hidden-el', !show);
+      }));
+      setTimeout(updateConns, 60);
+    }
+  }
+}
+
+function clickerNext(){
+  if (document.getElementById('summaryOverlay').classList.contains('visible')){ openTryIt(); return; }
+  if (subStepIdx < maxSubStep(flowIdx)){ subStepIdx++; applyStop(); return; }
+  goFlow(flowIdx + 1); // advances stop (resets subStepIdx); past the end → summary
+}
+
+function clickerPrev(){
+  if (document.getElementById('summaryOverlay').classList.contains('visible')){
+    document.getElementById('summaryOverlay').classList.remove('visible'); return;
+  }
+  if (subStepIdx > 0){ subStepIdx--; applyStop(); return; }
+  if (flowIdx > 0){
+    const prev = flowIdx - 1;
+    goFlow(prev);
+    subStepIdx = maxSubStep(prev); // entering a previous stop from the right → fully revealed
+    applyStop();
+  }
+}
+
+/* Mouse clicks on the agency demo keep the clicker sub-step in sync */
+function agencyPick(mode){ subStepIdx = (mode === 'gen') ? 1 : 3; agencyDemo(mode); }
+function agencyReturn(){ subStepIdx = (subStepIdx >= 3) ? 4 : 2; agencyBack(); }
 
 /* ═══ BREACH GLITCH FX (gaslight-inspired) ═══ */
 function triggerGlitch(intensity){
@@ -1336,8 +1417,8 @@ function renderTimeline() {
 function navButtonsHTML(accent){
   const last = flowIdx >= FLOW.length - 1;
   return `<div class="nav-buttons">
-      <button class="nav-btn prev" ${flowIdx===0?'disabled':''} onclick="goFlow(${flowIdx-1})">← Previous</button>
-      <button class="nav-btn next" style="background:${accent}" onclick="${last?'showSummary()':'goFlow('+(flowIdx+1)+')'}">${last?'Wrap-Up →':'Next →'}</button>
+      <button class="nav-btn prev" ${flowIdx===0?'disabled':''} onclick="clickerPrev()">← Previous</button>
+      <button class="nav-btn next" style="background:${accent}" onclick="clickerNext()">${last?'Wrap-Up →':'Next →'}</button>
     </div>`;
 }
 
@@ -1349,7 +1430,7 @@ const SLIDES = {
     <div class="slide-sub">Two very different things get called "AI." The security model for each is not the same. <strong>Click either box to run the same question through it.</strong></div>
     <div id="agencyCompare">
     <div class="cmp">
-      <div class="cmp-col demo-pick" style="border-color:rgba(162,178,200,0.4)" onclick="agencyDemo('gen')">
+      <div class="cmp-col demo-pick" style="border-color:rgba(162,178,200,0.4)" onclick="agencyPick('gen')">
         <h3>Generative AI</h3>
         <div class="cmp-tag" style="color:${C.silver}">REQUEST → RESPONSE</div>
         <div class="cmp-flow">
@@ -1363,7 +1444,7 @@ const SLIDES = {
         <div class="cmp-li">Risk surface: what goes <em>in</em> the prompt, what comes <em>out</em> in the response.</div>
         <div class="cmp-cta" style="color:${C.silver}">▶ Click to simulate</div>
       </div>
-      <div class="cmp-col demo-pick" style="border-color:rgba(44,204,211,0.5)" onclick="agencyDemo('agent')">
+      <div class="cmp-col demo-pick" style="border-color:rgba(44,204,211,0.5)" onclick="agencyPick('agent')">
         <h3>Agentic AI</h3>
         <div class="cmp-tag" style="color:${C.teal}">ITERATIVE · GOAL-SEEKING</div>
         <div class="cmp-flow">
@@ -1466,7 +1547,7 @@ function renderGenDemo(st){
     <div class="demo-stage">
       <div class="demo-head">
         <span class="demo-mode" style="color:var(--ft-silver)">Generative AI · one inference cycle</span>
-        <button class="demo-back" onclick="agencyBack()">← Back to comparison</button>
+        <button class="demo-back" onclick="agencyReturn()">← Back to comparison</button>
       </div>
       <div class="demo-q"><b>You ask</b>${FTNT_Q}</div>
       <div class="demo-a gen" id="genA"><span class="da-label">Model response</span><span style="opacity:.6">▍ thinking…</span></div>
@@ -1498,7 +1579,7 @@ function renderAgentDemo(st){
     <div class="demo-stage">
       <div class="demo-head">
         <span class="demo-mode" style="color:var(--ft-teal)">Agentic AI · iterative loop</span>
-        <button class="demo-back" onclick="agencyBack()">← Back to comparison</button>
+        <button class="demo-back" onclick="agencyReturn()">← Back to comparison</button>
       </div>
       <div class="demo-q"><b>You ask</b>${FTNT_Q}</div>
       ${stepHtml}
@@ -1764,7 +1845,7 @@ function renderDiagram() {
 
   // Nodes
   NODES.forEach(n => {
-    let vis = n.act <= curAct;
+    let vis = nodeRevealed(n);
     if (n.act === 2 && curAct >= 4) vis = false;
     if (n.act === 3 && curAct >= 4) vis = false;
 
@@ -1957,6 +2038,7 @@ function goIntro(){
   document.getElementById('scanlineAmb').classList.remove('on');
   document.getElementById('introOverlay').classList.remove('hidden');
   flowIdx = 0;
+  subStepIdx = 0;
 }
 
 /* ── SUMMARY (closing) ── */
@@ -2002,22 +2084,23 @@ function copyPayload(btn){
 document.addEventListener('keydown', e => {
   const typing = e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
   if (!typing && (e.key === 'p' || e.key === 'P')) { toggleProjector(); return; }
+  if (typing) return;
   const socUp = document.getElementById('socSim').classList.contains('show');
   if (socUp) { if (e.key === 'Escape') closeSocSim(); return; }
   const tryUp = document.getElementById('tryItOverlay').classList.contains('show');
   if (tryUp) { if (e.key === 'Escape') closeTryIt(); return; }
+  // Clicker / keyboard navigation. Presentation remotes send PageDown/PageUp
+  // (some send Space/Backspace); we also accept the arrow keys.
+  const isNext = ['ArrowRight','ArrowDown','PageDown',' ','Spacebar'].includes(e.key);
+  const isPrev = ['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key);
   const introUp = !document.getElementById('introOverlay').classList.contains('hidden');
-  const summaryUp = document.getElementById('summaryOverlay').classList.contains('visible');
   if (introUp) {
-    if (e.key === 'Enter' || e.key === 'ArrowRight') document.getElementById('introStart').click();
+    if (e.key === 'Enter' || isNext) { e.preventDefault(); document.getElementById('introStart').click(); }
     return;
   }
-  if (e.key === 'ArrowRight') { summaryUp ? null : goFlow(flowIdx + 1); }
-  if (e.key === 'ArrowLeft') {
-    if (summaryUp) { document.getElementById('summaryOverlay').classList.remove('visible'); goFlow(FLOW.length - 1); }
-    else goFlow(flowIdx - 1);
-  }
-  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); }
+  if (e.key === 'Escape') { closePanel(); document.getElementById('summaryOverlay').classList.remove('visible'); return; }
+  if (isNext) { e.preventDefault(); clickerNext(); return; }
+  if (isPrev) { e.preventDefault(); clickerPrev(); return; }
 });
 
 // Scale the fixed 1920×1080 design canvas to fit the actual screen (projector /
