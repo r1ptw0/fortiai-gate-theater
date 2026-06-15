@@ -1042,7 +1042,7 @@ const BADGES = [
 /* ═══ STATE ═══ */
 let curAct = 1, panelOpen = false, activeNodeId = null, flowIdx = 0, sprawlActive = false;
 /* Clicker sub-step position within the current flow stop (0 = the stop's base state).
-   Agency slide steps through its demos; acts reveal points one at a time. See ACT_REVEAL / clickerNext. */
+   Agency slide steps through its demos; acts open each point's panel in turn. See ACT_POINTS / clickerNext. */
 let subStepIdx = 0;
 const SPRAWL_MODELS = [
   { x:530, y:100, icon:ICONS.cpu, label:'OpenAI GPT-4o' },
@@ -1105,31 +1105,21 @@ function goFlow(i){
 /* ═══ CLICKER NAVIGATION ═══
    Drives the talk with a presentation remote / keyboard. Each flow stop can have
    sub-steps: the agency slide steps through its gen/agent demos, and each act
-   reveals its points (badge-numbered nodes) one click at a time. */
-const ACT_REVEAL = {
-  1: [['n1'], ['n2'], ['n2b'], ['n4','n4b','n4c'], ['n3']], // points 1,2,3,4,5 (optional team assistants ride with pt4)
-  2: [['n5'], ['n6'], ['n6b'], ['n6c']],                     // points 6,7, No Audit Trail, Model Sprawl
-  3: [['n7'], ['n8']]                                         // points 8,9
+   opens its points' detail panels one click at a time — as if the presenter
+   clicked each node in turn. All nodes stay visible throughout. */
+const ACT_POINTS = {
+  1: ['n1','n2','n2b','n4','n3'], // points 1,2,3,4,5
+  2: ['n5','n6','n6b','n6c'],     // points 6,7, No Audit Trail, Model Sprawl
+  3: ['n7','n8']                  // points 8,9
 };
 
-/* Is node n visible at the current act + sub-step? Earlier acts stay fully shown. */
-function nodeRevealed(n){
-  if (n.act < curAct) return true;
-  if (n.act > curAct) return false;
-  const groups = ACT_REVEAL[curAct];
-  if (!groups) return true; // acts without progressive reveal (e.g. Act 4)
-  for (let gi = 0; gi < groups.length; gi++){
-    if (groups[gi].includes(n.id)) return gi <= subStepIdx;
-  }
-  return true; // current-act node not in the reveal list → always show
-}
-
-/* Last sub-step index for a given flow stop (0 = no sub-steps). */
+/* Last sub-step index for a given flow stop (0 = no sub-steps).
+   Acts: sub-step 0 is the act landing (no panel), 1..N open each point's panel. */
 function maxSubStep(i){
   const s = FLOW[i];
   if (!s) return 0;
   if (s.type === 'slide' && s.id === 'agency') return 4; // compare, gen, back, agent, back
-  if (s.type === 'act' && ACT_REVEAL[s.n]) return ACT_REVEAL[s.n].length - 1;
+  if (s.type === 'act' && ACT_POINTS[s.n]) return ACT_POINTS[s.n].length;
   return 0;
 }
 
@@ -1142,17 +1132,11 @@ function applyStop(){
     else if (subStepIdx === 3) agencyDemo('agent');
     else agencyBack(); // 0, 2, 4 → comparison
   } else if (s.type === 'act'){
-    const groups = ACT_REVEAL[s.n];
-    if (groups){
-      groups.forEach((grp, gi) => grp.forEach(id => {
-        const el = document.getElementById('node-' + id);
-        if (!el) return;
-        const show = gi <= subStepIdx;
-        el.classList.toggle('visible-el', show);
-        el.classList.toggle('hidden-el', !show);
-      }));
-      setTimeout(updateConns, 60);
-    }
+    const pts = ACT_POINTS[s.n];
+    if (!pts) return;
+    if (subStepIdx === 0){ closePanel(); return; } // act landing — nothing selected yet
+    const node = NODES.find(nd => nd.id === pts[subStepIdx - 1]);
+    if (node) openPanel(node); // open this point's panel, exactly as a click on the node would
   }
 }
 
@@ -1845,7 +1829,7 @@ function renderDiagram() {
 
   // Nodes
   NODES.forEach(n => {
-    let vis = nodeRevealed(n);
+    let vis = n.act <= curAct;
     if (n.act === 2 && curAct >= 4) vis = false;
     if (n.act === 3 && curAct >= 4) vis = false;
 
