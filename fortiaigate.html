@@ -290,9 +290,11 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .main::-webkit-scrollbar-thumb,.info-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
 
 /* ── THEME TOGGLE ── */
-.theme-toggle,.proj-toggle{position:fixed;bottom:20px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;z-index:560;line-height:1}
+.theme-toggle,.proj-toggle,.fs-toggle{position:fixed;bottom:20px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;z-index:560;line-height:1}
 .theme-toggle:hover,.proj-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
 .proj-toggle{right:68px;font-size:17px}
+.fs-toggle{right:116px;font-size:18px}
+.theme-toggle:hover,.fs-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
 .proj-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
 .proj-toggle.on:hover{background:var(--ft-blue);border-color:var(--ft-blue)}
 
@@ -351,7 +353,7 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 
 .light-mode .main::-webkit-scrollbar-thumb,.light-mode .info-panel::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1)}
 
-.light-mode .theme-toggle,.light-mode .proj-toggle{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.8)}
+.light-mode .theme-toggle,.light-mode .proj-toggle,.light-mode .fs-toggle{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.8)}
 .light-mode .theme-toggle:hover,.light-mode .proj-toggle:hover{border-color:rgba(0,0,0,0.25);background:rgba(255,255,255,0.95)}
 .light-mode .proj-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
 
@@ -725,6 +727,7 @@ def connect():
 
 <div id="floatTip"></div>
 
+<div class="fs-toggle" id="fsToggle" onclick="toggleFullscreen()" title="Fullscreen (F)">⛶</div>
 <div class="proj-toggle" id="projectorToggle" onclick="toggleProjector()" title="Projector mode — boost contrast for projector / cinema (P)">◐</div>
 <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</div>
 
@@ -733,6 +736,16 @@ function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light-mode');
   const icon = isLight ? '🌙' : '☀️';
   document.querySelectorAll('.theme-toggle').forEach(el => el.textContent = icon);
+}
+
+// Browser-native fullscreen (no OS shortcut needed) — hides the tab/address bar.
+function toggleFullscreen() {
+  const d = document, el = d.documentElement;
+  if (!d.fullscreenElement && !d.webkitFullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || (()=>{})).call(el);
+  } else {
+    (d.exitFullscreen || d.webkitExitFullscreen || (()=>{})).call(d);
+  }
 }
 
 // Projector / high-contrast mode — boosts legibility on washed-out projectors
@@ -2206,6 +2219,7 @@ function copyPayload(btn){
 document.addEventListener('keydown', e => {
   const typing = e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
   if (!typing && (e.key === 'p' || e.key === 'P')) { toggleProjector(); return; }
+  if (!typing && (e.key === 'f' || e.key === 'F')) { toggleFullscreen(); return; }
   if (typing) return;
 
   // Clicker / keyboard navigation. Presentation remotes send PageDown/PageUp
@@ -2253,6 +2267,7 @@ function fitStage(){
 }
 window.addEventListener('resize', () => { fitDeck(); fitStage(); updateConns(); });
 document.addEventListener('fullscreenchange', () => { fitDeck(); fitStage(); updateConns(); });
+document.addEventListener('webkitfullscreenchange', () => { fitDeck(); fitStage(); updateConns(); });
 fitDeck();
 
 /* ── FLOATING TOOLTIP (avoids overflow clipping) ── */
