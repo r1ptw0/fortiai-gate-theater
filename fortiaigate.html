@@ -1150,7 +1150,8 @@ const ACT_STEPS = {
     { panel:'n2' },   // point 2 — SIEM Platform
     { panel:'n2b' },  // point 3 — SOC Copilot
     { sim:'soc' },    //   → SOC automation example (auto-plays)
-    { panel:'n4' },   // point 4 — Coding Assistant
+    { sim:'socMesh' },//   → "Now scale this to a SOC"
+    { panel:'n4' },   // point 4 — Coding Assistant ("Got it, back to the talk" closes the example)
     { sim:'code' },   //   → live code-completion example (auto-plays)
     { panel:'n3' }    // point 5 — LLM / AI Model
   ],
@@ -1187,6 +1188,9 @@ function applyStop(){
       if (node) openPanel(node); // open this point's panel, exactly as a click on the node would
     } else if (step.sim === 'soc'){
       runSocSim('promise'); // SOC automation example (auto-plays)
+    } else if (step.sim === 'socMesh'){
+      document.getElementById('socSim').classList.add('show'); // keep overlay up (e.g. on back-nav)
+      renderSocMesh();      // "Now scale this to a SOC" view
     } else if (step.sim === 'attack'){
       runSocSim('attack');  // "SOC automation gone wrong" example (auto-plays)
     } else if (step.sim === 'code'){
