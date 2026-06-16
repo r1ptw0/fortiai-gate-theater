@@ -409,6 +409,48 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .fg-cats li{break-inside:avoid}
 .fg-shot{border:1px solid var(--border-strong);border-radius:14px;overflow:hidden;background:var(--surface-card-bg);box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;max-height:600px}
 .fg-shot img{max-width:100%;max-height:600px;height:auto;object-fit:contain;display:block}
+/* ── SIMPLE OVERVIEW SLIDES (walkthrough → product bridge) ── */
+.slide-inner:has(.sim-wide){max-width:1360px}
+.sim-divider-logo{height:62px;margin:0 auto 22px;display:block}
+.sim-lead{font-size:18px;color:var(--text-secondary);line-height:1.55;max-width:62ch;margin-top:8px}
+.sim-lead strong{color:var(--text-primary)}
+.sim-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.sim-pill{display:inline-flex;align-items:center;background:rgba(44,204,211,0.12);color:var(--ft-teal);font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid rgba(44,204,211,0.28)}
+.sim-cards{display:flex;gap:18px;margin-top:22px}
+.sim-card{flex:1;min-width:0;background:var(--surface-card-bg);border:1px solid var(--border-default);border-left:3px solid var(--ft-teal);border-radius:12px;padding:18px}
+.sim-card.red{border-left-color:var(--ft-red)}
+.sim-card h3{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:5px}
+.sim-card p{font-size:13px;color:var(--text-secondary);line-height:1.5}
+.sim-ico{width:54px;height:54px;border-radius:13px;background:rgba(44,204,211,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.sim-ico img{width:58%;height:58%;object-fit:contain}
+.sim-flow{display:flex;align-items:stretch;gap:0;margin-top:26px}
+.sim-flow-step{flex:1;background:var(--surface-card-bg);border:1px solid var(--border-default);border-radius:12px;padding:16px 14px;text-align:center}
+.sim-flow-num{display:inline-flex;width:34px;height:34px;border-radius:9px;background:var(--ft-teal);color:#08121a;align-items:center;justify-content:center;font-weight:800;margin-bottom:9px}
+.sim-flow-step h4{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.sim-flow-step p{font-size:12px;color:var(--text-secondary);line-height:1.45}
+.sim-flow-arrow{display:flex;align-items:center;color:var(--ft-red);font-size:26px;font-weight:800;padding:0 8px}
+.sim-stats{display:flex;gap:24px;margin-top:28px}
+.sim-stat{flex:1;text-align:center}
+.sim-stat .num{font-size:60px;font-weight:800;color:var(--ft-teal);line-height:1}
+.sim-stat .lbl{font-size:14px;color:var(--text-secondary);margin-top:8px;line-height:1.4}
+.sim-outcome{margin-top:26px;background:var(--surface-card-bg);border:1px solid var(--border-default);border-left:3px solid var(--ft-red);border-radius:12px;padding:18px 20px;font-size:17px;color:var(--text-secondary);line-height:1.5}
+.sim-outcome strong{color:var(--text-primary)}
+.sim-arch{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:26px;flex-wrap:wrap}
+.sim-arch-col{display:flex;flex-direction:column;gap:16px}
+.sim-arch-node{display:flex;align-items:center;gap:12px;background:var(--surface-card-bg);border:1px solid var(--border-default);border-radius:12px;padding:13px 16px;min-width:188px}
+.sim-arch-node img{width:38px;height:38px;object-fit:contain;flex:none}
+.sim-arch-cap{font-size:14px;font-weight:600;color:var(--text-primary);line-height:1.25}
+.sim-arch-cap span{display:block;font-weight:400;color:var(--text-secondary);font-size:.85em}
+.sim-arch-arrow{color:var(--ft-red);font-size:32px;font-weight:800;flex:none}
+.sim-gate{background:linear-gradient(160deg,rgba(218,41,28,0.18),rgba(44,204,211,0.16));border:2px solid var(--ft-red);border-radius:18px;padding:22px 26px;text-align:center;min-width:236px;box-shadow:var(--shadow-card)}
+.sim-gate img{width:62px;height:62px;object-fit:contain;margin:0 auto 8px;display:block}
+.sim-gate-title{font-size:23px;font-weight:800;color:var(--text-primary)}
+.sim-gate-sub{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.sim-gate-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.sim-gate-tags span{background:var(--surface-2);color:var(--text-primary);font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--border-default)}
+.sim-fabric{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px auto 0;background:rgba(60,177,126,0.12);border:1px solid rgba(60,177,126,0.32);border-radius:12px;padding:13px 22px;color:var(--text-secondary);font-size:14px;max-width:860px}
+.sim-fabric img{height:24px;opacity:.9}
+.light-mode .sim-ico img,.light-mode .sim-arch-node img,.light-mode .sim-gate img,.light-mode .sim-fabric img,.light-mode .sim-divider-logo{filter:invert(1)}
 /* ── ACT 0 SIMULATION ── */
 .cmp-col.demo-pick{cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
 .cmp-col.demo-pick:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.35)}
@@ -1088,6 +1130,12 @@ const FLOW = [
   { type:'act',   n:2,         color:ACT_COLORS[1] },
   { type:'act',   n:3,         color:ACT_COLORS[2] },
   { type:'act',   n:4,         color:ACT_COLORS[3] },
+  { type:'slide', id:'simIntro',  color:C.teal },
+  { type:'slide', id:'simWhat',   color:C.teal },
+  { type:'slide', id:'simHow',    color:C.teal },
+  { type:'slide', id:'simArch',   color:C.teal },
+  { type:'slide', id:'simCaps',   color:C.teal },
+  { type:'slide', id:'simValue',  color:C.teal },
   { type:'slide', id:'fgGateway', color:C.red },
   { type:'slide', id:'fgRouting', color:C.red },
   { type:'slide', id:'fgMcp',     color:C.red },
@@ -1528,6 +1576,102 @@ const SLIDES = {
       <div class="owasp-item"><span class="owasp-code">LLM09</span><span class="owasp-txt"><b>Misinformation</b> — confident, plausible, but false output that humans over-trust.</span></div>
       <div class="owasp-item"><span class="owasp-code">LLM10</span><span class="owasp-txt"><b>Unbounded Consumption</b> — token/compute abuse drives cost, denial of service, and resource exhaustion.</span></div>
     </div><div class="owasp-foot">Maintained by OWASP — the catalogue we'll map each risk back to as we move through the talk.</div>
+  `},
+
+  /* ═══ SIMPLE OVERVIEW — bridge from the walkthrough into the product ═══ */
+  simIntro: { accent:C.teal, html:`
+    <img class="sim-divider-logo" src="assets/fortiaigate-white.svg" alt="FortiAIGate">
+    <div class="slide-eyebrow" style="color:${C.teal}">INTRODUCING</div>
+    <div class="slide-title">An AI security gateway<br>for the <span class="gr">enterprise</span></div>
+    <div class="slide-sub">See it. Govern it. Protect it.</div>
+  `},
+
+  simWhat: { accent:C.teal, html:`
+    <div class="slide-eyebrow" style="color:${C.teal}">WHAT IT IS</div>
+    <div class="slide-title">FortiAIGate <span class="gr">at a glance</span></div>
+    <div class="sim-wide">
+      <p class="sim-lead">FortiAIGate is an <strong>AI-aware security gateway</strong> that sits between your users and applications and the AI services they use — a single control point to discover AI usage, enforce policy, and stop AI-specific threats.</p>
+      <div class="sim-pills">
+        <span class="sim-pill">Discover</span><span class="sim-pill">Govern</span><span class="sim-pill">Protect</span><span class="sim-pill">Part of the Fortinet Security Fabric</span>
+      </div>
+      <div class="sim-cards">
+        <div class="sim-card"><div class="sim-ico"><img src="assets/ai-threat-white.svg" alt=""></div><h3>For users</h3><p>Safe access to public GenAI tools without leaking sensitive data.</p></div>
+        <div class="sim-card"><div class="sim-ico"><img src="assets/secure-ai-white.svg" alt=""></div><h3>For builders</h3><p>Guardrails for the LLM-powered apps your teams ship to production.</p></div>
+      </div>
+    </div>
+  `},
+
+  simHow: { accent:C.teal, html:`
+    <div class="slide-eyebrow" style="color:${C.teal}">HOW IT WORKS</div>
+    <div class="slide-title">Inline inspection of <span class="gr">every AI interaction</span></div>
+    <div class="slide-sub">Traffic to AI services is routed through the gateway, inspected in real time, and allowed, masked, or blocked by policy.</div>
+    <div class="sim-wide">
+      <div class="sim-flow">
+        <div class="sim-flow-step"><div class="sim-flow-num">1</div><h4>Intercept</h4><p>User or app sends a prompt to an AI service.</p></div>
+        <div class="sim-flow-arrow">→</div>
+        <div class="sim-flow-step"><div class="sim-flow-num">2</div><h4>Identify</h4><p>Recognize the AI app, user, and intent.</p></div>
+        <div class="sim-flow-arrow">→</div>
+        <div class="sim-flow-step"><div class="sim-flow-num">3</div><h4>Inspect</h4><p>Scan prompt &amp; response for sensitive data and threats.</p></div>
+        <div class="sim-flow-arrow">→</div>
+        <div class="sim-flow-step"><div class="sim-flow-num">4</div><h4>Enforce</h4><p>Allow, redact, or block — and log it all.</p></div>
+      </div>
+    </div>
+  `},
+
+  simArch: { accent:C.teal, html:`
+    <div class="slide-eyebrow" style="color:${C.teal}">ARCHITECTURE</div>
+    <div class="slide-title">Where <span class="gr">FortiAIGate</span> sits</div>
+    <div class="sim-wide">
+      <div class="sim-arch">
+        <div class="sim-arch-col">
+          <div class="sim-arch-node"><img src="assets/app-control-white.svg" alt=""><div class="sim-arch-cap">Employees<span>using GenAI</span></div></div>
+          <div class="sim-arch-node"><img src="assets/application-white.svg" alt=""><div class="sim-arch-cap">LLM-powered<span>apps</span></div></div>
+        </div>
+        <div class="sim-arch-arrow">→</div>
+        <div class="sim-gate">
+          <img src="assets/fortiaigate-white.svg" alt="">
+          <div class="sim-gate-title">FortiAIGate</div>
+          <div class="sim-gate-sub">Inspect every prompt &amp; response</div>
+          <div class="sim-gate-tags"><span>Discover</span><span>DLP</span><span>Threat protection</span><span>Policy</span></div>
+        </div>
+        <div class="sim-arch-arrow">→</div>
+        <div class="sim-arch-col">
+          <div class="sim-arch-node"><img src="assets/cloud-white.svg" alt=""><div class="sim-arch-cap">Public GenAI<span>ChatGPT, Copilot…</span></div></div>
+          <div class="sim-arch-node"><img src="assets/cloud-white.svg" alt=""><div class="sim-arch-cap">Private &amp; API<span>models</span></div></div>
+        </div>
+      </div>
+      <div class="sim-fabric"><img src="assets/secure-ai-white.svg" alt="">Context shared with the Fortinet Security Fabric — logging, analytics &amp; enforcement</div>
+    </div>
+  `},
+
+  simCaps: { accent:C.teal, html:`
+    <div class="slide-eyebrow" style="color:${C.teal}">CAPABILITIES</div>
+    <div class="slide-title">What <span class="gr">FortiAIGate</span> does</div>
+    <div class="sim-wide">
+      <div class="sim-cards">
+        <div class="sim-card"><h3>AI discovery &amp; visibility</h3><p>Surface every AI/LLM service in use across the organization, by user and app.</p></div>
+        <div class="sim-card"><h3>Data loss prevention</h3><p>Detect and redact secrets, PII, and regulated data before it reaches an AI model.</p></div>
+        <div class="sim-card"><h3>Threat protection</h3><p>Block prompt injection, jailbreaks, and malicious or unsafe model output.</p></div>
+      </div>
+      <div class="sim-cards" style="margin-top:16px">
+        <div class="sim-card"><h3>Granular policy</h3><p>Per-user, per-group, per-app rules — sanction the right tools, block the rest.</p></div>
+        <div class="sim-card"><h3>Compliance &amp; audit</h3><p>Full logging of AI interactions for governance, audit, and investigation.</p></div>
+        <div class="sim-card"><h3>Fabric integration</h3><p>Shares context with FortiGate, FortiGuard, and the broader Security Fabric.</p></div>
+      </div>
+    </div>
+  `},
+
+  simValue: { accent:C.teal, html:`
+    <div class="slide-eyebrow" style="color:${C.teal}">WHY IT MATTERS</div>
+    <div class="slide-title">From "block AI" to <span class="gr">"enable AI safely"</span></div>
+    <div class="sim-wide">
+      <div class="sim-stats">
+        <div class="sim-stat"><div class="num">100%</div><div class="lbl">visibility into AI usage<br>across users &amp; apps</div></div>
+        <div class="sim-stat"><div class="num">0</div><div class="lbl">sensitive records<br>leaked to public models</div></div>
+        <div class="sim-stat"><div class="num">1</div><div class="lbl">policy &amp; control point<br>for all AI traffic</div></div>
+      </div>
+      <div class="sim-outcome"><strong>The outcome:</strong> security teams say "yes" to AI productivity instead of "no" — with the guardrails to back it up.</div>
+    </div>
   `},
 
   /* ═══ PRODUCT SLIDES — FortiAIGate feature overview (closing) ═══ */
