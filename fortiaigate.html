@@ -94,6 +94,29 @@ html.projector-mode .cmp-col{border-color:var(--border-strong)}
 html.projector-mode .narration{font-style:normal}
 html.projector-mode .node-label{font-weight:700}
 html.projector-mode .connector{stroke-width:3;opacity:.85!important}
+
+/* ── THEATER MODE ──
+   For a large cinema / theater screen viewed from a distance, the authored 1920×1080
+   layout reads small. Rather than overscaling the whole canvas (which would crop the
+   edges), theater mode zooms the IN-FLOW content inside each scroll container, so any
+   overflow scrolls within its own panel instead of running off the screen edge —
+   nothing gets cut off. The central diagram is enlarged via its own auto-fit (fitStage
+   lifts its scale cap when theater mode is on). Toggle with the ⤢ control (bottom-right)
+   or the "T" key; "+" / "−" adjust the amount, "0" resets. Default ON for this build. */
+html.theater-mode .slide-inner,
+html.theater-mode .act-header,
+html.theater-mode .bottom-area,
+html.theater-mode .intro-card,
+html.theater-mode .summary-card,
+html.theater-mode .tryit-inner,
+html.theater-mode .sim-inner,
+html.theater-mode #panelContent{ zoom: var(--theater-zoom, 1.18); }
+html.theater-mode .topbar-title{ font-size:16px }
+/* Centered overlays must scroll (not center-clip) once their content is enlarged
+   past the viewport height — pin to the top and allow vertical overflow. */
+html.theater-mode .intro-overlay,
+html.theater-mode .summary-overlay{ overflow-y:auto; align-items:flex-start; padding:48px 20px }
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{
@@ -297,6 +320,13 @@ svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-eve
 .theme-toggle:hover,.fs-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
 .proj-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
 .proj-toggle.on:hover{background:var(--ft-blue);border-color:var(--ft-blue)}
+.theater-toggle{position:fixed;bottom:20px;right:164px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;z-index:560;line-height:1}
+.theater-toggle:hover{border-color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.8);transform:scale(1.05)}
+.theater-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
+.theater-toggle.on:hover{background:var(--ft-blue);border-color:var(--ft-blue)}
+.light-mode .theater-toggle{border-color:rgba(0,0,0,0.12);background:rgba(255,255,255,0.8)}
+.light-mode .theater-toggle:hover{border-color:rgba(0,0,0,0.25);background:rgba(255,255,255,0.95)}
+.light-mode .theater-toggle.on{background:var(--ft-blue);border-color:var(--ft-blue);color:#fff}
 
 /* ── LIGHT MODE ── */
 .light-mode{--text-primary:#1d1d1f;--text-secondary:#6e6e73;--text-dim:#aeaeb2;--ft-grey:#aeaeb2}
@@ -769,6 +799,7 @@ def connect():
 
 <div id="floatTip"></div>
 
+<div class="theater-toggle" id="theaterToggle" onclick="toggleTheater()" title="Theater mode — enlarge everything for a big screen (T) · + / − adjust · 0 reset">⤢</div>
 <div class="fs-toggle" id="fsToggle" onclick="toggleFullscreen()" title="Fullscreen (F)">⛶</div>
 <div class="proj-toggle" id="projectorToggle" onclick="toggleProjector()" title="Projector mode — boost contrast for projector / cinema (P)">◐</div>
 <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</div>
@@ -807,6 +838,54 @@ function toggleProjector() {
       if (btn) btn.classList.add('on');
     }
   } catch (e) {}
+})();
+
+// Theater mode — enlarges all readable content for a large cinema / theater screen.
+// It zooms the in-flow content inside each scroll container (so nothing is cropped at
+// the screen edge — overflow scrolls within its panel) and lets the central diagram
+// auto-fit larger (fitStage raises its cap). The zoom amount is tunable and persisted,
+// so it survives a reload mid-presentation.
+let theaterZoom = 1.18;
+const THEATER_MIN = 1.0, THEATER_MAX = 1.8;
+function applyTheaterZoom() {
+  document.documentElement.style.setProperty('--theater-zoom', theaterZoom.toFixed(2));
+  fitStage(); updateConns(); // bigger diagram cap → recompute stage scale + connector lines
+}
+function setTheater(on) {
+  document.documentElement.classList.toggle('theater-mode', on);
+  const btn = document.getElementById('theaterToggle');
+  if (btn) btn.classList.toggle('on', on);
+  try { localStorage.setItem('fag-theater', on ? '1' : '0'); } catch (e) {}
+  applyTheaterZoom();
+}
+function toggleTheater() {
+  setTheater(!document.documentElement.classList.contains('theater-mode'));
+}
+function bumpTheaterZoom(delta) {
+  if (!document.documentElement.classList.contains('theater-mode')) setTheater(true);
+  theaterZoom = Math.min(THEATER_MAX, Math.max(THEATER_MIN, Math.round((theaterZoom + delta) * 100) / 100));
+  try { localStorage.setItem('fag-theater-zoom', String(theaterZoom)); } catch (e) {}
+  applyTheaterZoom();
+}
+function resetTheaterZoom() {
+  theaterZoom = 1.18;
+  try { localStorage.setItem('fag-theater-zoom', String(theaterZoom)); } catch (e) {}
+  applyTheaterZoom();
+}
+(function restoreTheater() {
+  try {
+    const z = parseFloat(localStorage.getItem('fag-theater-zoom'));
+    if (!isNaN(z)) theaterZoom = Math.min(THEATER_MAX, Math.max(THEATER_MIN, z));
+    // Default ON for this theater-optimised build, unless the user explicitly turned it off.
+    const saved = localStorage.getItem('fag-theater');
+    const on = saved === null ? true : saved === '1';
+    document.documentElement.classList.toggle('theater-mode', on);
+    const btn = document.getElementById('theaterToggle');
+    if (btn) btn.classList.toggle('on', on);
+  } catch (e) {
+    document.documentElement.classList.add('theater-mode');
+  }
+  document.documentElement.style.setProperty('--theater-zoom', theaterZoom.toFixed(2));
 })();
 
 const C = {
@@ -2367,6 +2446,11 @@ document.addEventListener('keydown', e => {
   const typing = e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
   if (!typing && (e.key === 'p' || e.key === 'P')) { toggleProjector(); return; }
   if (!typing && (e.key === 'f' || e.key === 'F')) { toggleFullscreen(); return; }
+  // Theater mode: T toggles, + / − tune the zoom, 0 resets it.
+  if (!typing && (e.key === 't' || e.key === 'T')) { toggleTheater(); return; }
+  if (!typing && (e.key === '+' || e.key === '=')) { e.preventDefault(); bumpTheaterZoom(0.06); return; }
+  if (!typing && (e.key === '-' || e.key === '_')) { e.preventDefault(); bumpTheaterZoom(-0.06); return; }
+  if (!typing && e.key === '0') { e.preventDefault(); resetTheaterZoom(); return; }
   if (typing) return;
 
   // Clicker / keyboard navigation. Presentation remotes send PageDown/PageUp
@@ -2409,7 +2493,10 @@ function fitStage(){
   const availW = wrap.clientWidth - 32;
   const availH = wrap.clientHeight - 16;
   let scale = Math.min(availW / 960, availH / 540);
-  scale = Math.min(1, Math.max(0.4, scale));
+  // Theater mode lets the diagram grow past 1× to fill the stage (it stays auto-fit to
+  // the wrap, so it never overflows / clips); otherwise keep the authored 1× ceiling.
+  const cap = document.documentElement.classList.contains('theater-mode') ? 1.7 : 1;
+  scale = Math.min(cap, Math.max(0.4, scale));
   document.documentElement.style.setProperty('--diagram-scale', scale.toFixed(4));
 }
 window.addEventListener('resize', () => { fitDeck(); fitStage(); updateConns(); });
